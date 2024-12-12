@@ -8,5 +8,6 @@ extern pacman_t pacman;
 
 void pause_screen();
 void print_pacman();
+void draw_map();
 
 #endif

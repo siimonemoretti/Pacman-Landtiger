@@ -3,6 +3,8 @@
 
 #define START_X	120
 #define START_Y	160
+#define MAP_X		28
+#define MAP_Y 	28
 
 // Game's state: intro->gaming->intro (paused) and so on
 typedef enum {
@@ -18,9 +20,17 @@ typedef enum {
 	NUM_DIRS			// 4 == The number of possible directions!
 } dir_t;
 
+typedef enum {
+	PACMAN,
+	FLOOR,
+	STANDARD_PILL,
+	POWER_PILL,
+	WALL
+} cell_t;
+
 typedef struct {
-	uint16_t x;
-	uint16_t y;
+	uint8_t x;
+	uint8_t y;
 } int2_t;
 
 typedef struct {
@@ -30,5 +40,6 @@ typedef struct {
 
 extern pacman_t pacman;
 extern gamestate_t gamestate;
+extern cell_t map[MAP_X][MAP_Y];
 
 #endif

@@ -13,5 +13,5 @@ void BUTTON_init(void) {
   LPC_SC->EXTMODE = 0b1; 									 /* Make EINT0 edge sensitive */
 	
   NVIC_EnableIRQ(EINT0_IRQn);              /* enable irq in nvic                 */
-	NVIC_SetPriority(EINT0_IRQn, 3);				 /* decreasing priority	from EINT2->0	 */
+	NVIC_SetPriority(EINT0_IRQn, 0);				 /* decreasing priority	from EINT2->0	 */
 }

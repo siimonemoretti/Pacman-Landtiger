@@ -3,6 +3,7 @@
 #include "GLCD/GLCD.h" 
 #include "timer/timer.h"
 #include "Pacman/pacman.h"
+#include "Display/display.h"
 #include "Joystick/joystick.h"
 #include "button_EXINT/button.h"
 
@@ -12,6 +13,7 @@ extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emul
 
 pacman_t pacman;
 gamestate_t gamestate;
+cell_t map[MAP_X][MAP_Y];
 
 int main(void)
 {

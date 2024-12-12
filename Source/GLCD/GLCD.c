@@ -596,6 +596,43 @@ void LCD_DrawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t
 	}
 } 
 
+// Function to draw a filled circle, which will be used to represent Pacman body
+void LCD_DrawFilledCircle(uint16_t x0, uint16_t y0, uint16_t r, uint16_t color) {
+    int16_t x = r - 1;
+    int16_t y = 0;
+    int16_t dx = 1;
+    int16_t dy = 1;
+    int16_t err = dx - (r << 1);
+
+    while (x >= y) {
+        LCD_SetPoint(x0 + x, y0 + y, color); // Quadrant 1
+        LCD_SetPoint(x0 + y, y0 + x, color); // Quadrant 2
+        LCD_SetPoint(x0 - y, y0 + x, color); // Quadrant 3
+        LCD_SetPoint(x0 - x, y0 + y, color); // Quadrant 4
+        LCD_SetPoint(x0 - x, y0 - y, color); // Quadrant 5
+        LCD_SetPoint(x0 - y, y0 - x, color); // Quadrant 6
+        LCD_SetPoint(x0 + y, y0 - x, color); // Quadrant 7
+        LCD_SetPoint(x0 + x, y0 - y, color); // Quadrant 8
+
+        if (err <= 0) {
+            y++;
+            err += dy;
+            dy += 2;
+        }
+        if (err > 0) {
+            x--;
+            dx += 2;
+            err += dx - (r << 1);
+        }
+    }
+}
+
+void LCD_DrawPacman( uint16_t x0, uint16_t y0, uint16_t r, uint16_t color )
+{
+	// x0 and y0 are the center of the pacman, we want to color a "circle" of radius r with color "color"
+    LCD_DrawFilledCircle(x0, y0, r, color);
+}
+
 /******************************************************************************
 * Function Name  : PutChar
 * Description    : 将Lcd屏上任意位置显示一个字符

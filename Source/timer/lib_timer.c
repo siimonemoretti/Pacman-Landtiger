@@ -10,46 +10,20 @@
 #include "LPC17xx.h"
 #include "timer.h"
 
-/******************************************************************************
-** Function name:		enable_timer
-**
-** Descriptions:		Enable timer
-**
-** parameters:			timer number: 0 or 1
-** Returned value:		None
-**
-******************************************************************************/
 void enable_timer( uint8_t timer_num )
 {
   if ( timer_num == 0 )
   {
 	LPC_TIM0->TCR = 1;
   }
-  else
-  {
-	LPC_TIM1->TCR = 1;
-  }
   return;
 }
 
-/******************************************************************************
-** Function name:		disable_timer
-**
-** Descriptions:		Disable timer
-**
-** parameters:			timer number: 0 or 1
-** Returned value:		None
-**
-******************************************************************************/
 void disable_timer( uint8_t timer_num )
 {
   if ( timer_num == 0 )
   {
 	LPC_TIM0->TCR = 0;
-  }
-  else
-  {
-	LPC_TIM1->TCR = 0;
   }
   return;
 }

@@ -62,4 +62,6 @@ typedef struct
 	cell_t map[MAP_X][MAP_Y];
 } game_t;
 
+extern game_t game;
+
 #endif

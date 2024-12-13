@@ -35,7 +35,7 @@
 #elif  ( DISP_ORIENTATION == 0 ) || ( DISP_ORIENTATION == 180 )
 
 #define  MAX_X  240
-#define  MAX_Y  320   
+#define  MAX_Y  320  
 
 #endif
 

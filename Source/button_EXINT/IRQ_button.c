@@ -2,14 +2,14 @@
 #include "LPC17xx.h"
 #include "../Pacman/pacman.h"
 
-extern gamestate_t gamestate;
+extern game_t game;
 
 void EINT0_IRQHandler (void)
 {		
 	// Toggle gamestate
-	if (gamestate == GAMESTATE_INTRO)
-		gamestate = GAMESTATE_GAME;
-	else if (gamestate == GAMESTATE_GAME)
-		gamestate = GAMESTATE_INTRO;
+	if (game.gamestate == GAMESTATE_INTRO)
+		game.gamestate = GAMESTATE_GAME;
+	else if (game.gamestate == GAMESTATE_GAME)
+		game.gamestate = GAMESTATE_INTRO;
 	LPC_SC->EXTINT &= (1 << 0);     /* clear pending interrupt         */
 }

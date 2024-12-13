@@ -1,34 +1,36 @@
 #include "display.h"
+#include <stdlib.h>
 
 void pause_screen()
 {
-	LCD_Clear(Blue);
-	GUI_Text((120 - (2 * 8)), 160, (uint8_t *)"PAUSE", Black, White);
+	GUI_Text((120 - (2 * 8) - 4), (160-8), (uint8_t *)"PAUSE", Black, White);
 }
 
-void draw_map()
+void draw_map(game_t game)
 {
+	LCD_Clear(BK_COLOR);
 	uint8_t x, y;
 	for (x = 0; x < MAP_X; x++)
 	{
 		for (y = 0; y < MAP_Y; y++)
 		{
-			switch (map[x][y])
+			switch (game.map[x][y])
 			{
 			case PACMAN:
-				LCD_DrawPacman(x, y, dir, pacman.color);
+				LCD_DrawPacman(x, y, game.pacman.dir, game.pacman.color);
 				break;
 			case FLOOR:
-				LCD_DrawFloor(x, y, Black);
+				LCD_DrawFloor(x, y);
 				break;
 			case WALL:
-				LCD_DrawWall(x, y, White);
+				// Test: Draw Line
+				LCD_DrawWall(y, x, Blue);
 				break;
 			case STANDARD_PILL:
-				LCD_DrawStandardPill(x, y, White);
+				LCD_DrawStandardPill(x, y, Cyan);
 				break;
 			case POWER_PILL:
-				LCD_DrawPowerPill(x, y, White);
+				LCD_DrawPowerPill(x, y, Magenta);
 				break;
 			default:
 				break;
@@ -39,34 +41,38 @@ void draw_map()
 
 void move_pacman(uint16_t x, uint16_t y)
 {
-	switch (map[x][y])
+	// Check that x and y are valid
+	// TODO: Implement teletransportation
+	if (x < 0 || x >= MAP_X || y < 0 || y >= MAP_Y)
+		return;
+	switch (game.map[x][y])
 	{
 	case WALL:
 		return;
 	case FLOOR:
-		map[pacman.x][pacman.y] = FLOOR;
-		LCD_DrawFloor(pacman.x, pacman.y);
-		pacman.x = x;
-		pacman.y = y;
-		map[pacman.x][pacman.y] = PACMAN;
-		LCD_DrawPacman(pacman.x, pacman.y, pacman.dir, pacman.color);
+		game.map[game.pacman.x][game.pacman.y] = FLOOR;
+		LCD_DrawFloor(game.pacman.x, game.pacman.y);
+		game.pacman.x = x;
+		game.pacman.y = y;
+		game.map[game.pacman.x][game.pacman.y] = PACMAN;
+		LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
 		break;
 	case STANDARD_PILL:
-		map[pacman.x][pacman.y] = FLOOR;
-		LCD_DrawFloor(pacman.x, pacman.y);
-		pacman.x = x;
-		pacman.y = y;
-		map[pacman.x][pacman.y] = PACMAN;
-		LCD_DrawPacman(pacman.x, pacman.y, pacman.dir, pacman.color);
+		game.map[game.pacman.x][game.pacman.y] = FLOOR;
+		LCD_DrawFloor(game.pacman.x, game.pacman.y);
+		game.pacman.x = x;
+		game.pacman.y = y;
+		game.map[game.pacman.x][game.pacman.y] = PACMAN;
+		LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
 		// TODO: Update score
 		break;
 	case POWER_PILL:
-		map[pacman.x][pacman.y] = FLOOR;
-		LCD_DrawFloor(pacman.x, pacman.y);
-		pacman.x = x;
-		pacman.y = y;
-		map[pacman.x][pacman.y] = PACMAN;
-		LCD_DrawPacman(pacman.x, pacman.y, pacman.dir, pacman.color);
+		game.map[game.pacman.x][game.pacman.y] = FLOOR;
+		LCD_DrawFloor(game.pacman.x, game.pacman.y);
+		game.pacman.x = x;
+		game.pacman.y = y;
+		game.map[game.pacman.x][game.pacman.y] = PACMAN;
+		LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
 		// TODO: Update score
 		break;
 	default:
@@ -168,18 +174,28 @@ void init_map_walls(cell_t map[MAP_X][MAP_Y])
       map[MAP_X - 9][y] = WALL;
    }
    // 10+11 Row: wall @ 4, 7, 20, 23
-   map[9][4] = WALL;
+    for (y = 0; y < 5; y++)
+   {
+      map[9][y] = WALL;
+      map[MAP_X - 10][y] = WALL;
+      map[9][MAP_Y - 1 - y] = WALL;
+      map[MAP_X - 10][MAP_Y - 1 - y] = WALL;
+   }
    map[9][7] = WALL;
    map[9][20] = WALL;
-   map[9][23] = WALL;
    map[MAP_X - 10][4] = WALL;
    map[MAP_X - 10][7] = WALL;
    map[MAP_X - 10][20] = WALL;
    map[MAP_X - 10][23] = WALL;
-   map[10][4] = WALL;
+    for (y = 0; y < 5; y++)
+   {
+      map[10][y] = WALL;
+      map[MAP_X - 11][y] = WALL;
+      map[10][MAP_Y - 1 - y] = WALL;
+      map[MAP_X - 11][MAP_Y - 1 - y] = WALL;
+   }
    map[10][7] = WALL;
    map[10][20] = WALL;
-   map[10][23] = WALL;
    map[MAP_X - 11][4] = WALL;
    map[MAP_X - 11][7] = WALL;
    map[MAP_X - 11][20] = WALL;
@@ -203,11 +219,12 @@ void init_map_walls(cell_t map[MAP_X][MAP_Y])
       map[12][y] = WALL;
       map[MAP_X - 13][y] = WALL;
    }
-   // 14 Row: Wall @ 11, 16
-   map[13][11] = WALL;
-   map[13][16] = WALL;
-   map[MAP_X - 14][11] = WALL;
-   map[MAP_X - 14][16] = WALL;
+   // 14 Row: Line from 11 to 16
+   for (y = 11; y < 17; y++)
+   {
+      map[13][y] = WALL;
+      map[MAP_X - 14][y] = WALL;
+   }
 
    // Set Pacman's position
    map[START_X][START_Y] = PACMAN;

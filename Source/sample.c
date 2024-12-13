@@ -11,7 +11,7 @@
 extern uint8_t ScaleFlag; // <- ScaleFlag needs to visible in order for the emulator to find the symbol (can be placed also inside system_LPC17xx.h but since it is RO, it needs more work)
 #endif
 
-game_t game = {
+game_t game  = {
 	 .pacman = {
 		  .x = START_X,
 		  .y = START_Y,
@@ -30,11 +30,11 @@ int main(void)
 	JOYSTICK_init();
 	init_RIT(0x004C4B40);
 	enable_RIT();
-
-	// Initialize map and allocate memory for it
-	init_map_walls(game->map);
+	
+	// Initialize map
+	init_map_walls(game.map);
 	// Draw whole map
-	draw_map();
+	draw_map(game);
 
 	// LCD_DrawLine(0, 0, 200, 200, White);
 	// init_timer(0, 0x1312D0 ); 						/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0 */

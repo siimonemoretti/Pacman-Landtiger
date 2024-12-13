@@ -217,7 +217,7 @@ static void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos)
 	Ypos = (MAX_X - 1) - temp;
 
 #elif (DISP_ORIENTATION == 0) || (DISP_ORIENTATION == 180)
-
+	
 #endif
 
 	switch (LCD_Code)
@@ -592,10 +592,10 @@ void LCD_DrawPacman(uint8_t x, uint8_t y, uint8_t dir, uint16_t color)
 	// 00----00
 	// 000--000
 	// 00000000
-	y = (MAX_Y - 1) - y;
-	int xx = x * 8 + X_OFFSET;
-	int yy = y * 8 + Y_OFFSET;
+	int xx = y * 8 + X_OFFSET;
+	int yy = (MAP_X - x) * 8 + Y_OFFSET;
 	int i, j;
+	// DEBUGGING TODO: Draw 4 corners
 	// Fill the map with bkColor
 	for (i = 0; i < 8; i++)
 		for (j = 0; j < 8; j++)
@@ -616,20 +616,16 @@ void LCD_DrawPacman(uint8_t x, uint8_t y, uint8_t dir, uint16_t color)
 	// Draw the eye
 	switch (dir)
 	{
-	case:
-		RIGHT
+	case RIGHT:
 		LCD_SetPoint(xx + 4, yy + 5, Black);
 		break;
-	case:
-		DOWN
+	case DOWN:
 			 LCD_SetPoint(xx + 4, yy + 2, Black);
 		break;
-	case:
-		LEFT
+	case LEFT:
 			 LCD_SetPoint(xx + 3, yy + 5, Black);
 		break;
-	case:
-		UP
+	case UP:
 			 LCD_SetPoint(xx + 3, yy + 2, Black);
 		break;
 	default:
@@ -645,26 +641,24 @@ void LCD_DrawFloor(uint8_t x, uint8_t y)
 	// And we have to keep in mind that there's an offset of
 	// Thus, y coordinate must be inverted
 	// Floor is just the background color
-	y = (MAX_Y - 1) - y;
-	int xx = x * 8 + X_OFFSET;
-	int yy = y * 8 + Y_OFFSET;
+	int xx = y * 8 + X_OFFSET;
+	int yy = (MAP_X - x) * 8 + Y_OFFSET;
 	int i, j;
 	for (i = 0; i < 8; i++)
 		for (j = 0; j < 8; j++)
 			LCD_SetPoint(xx + j, yy + i, BK_COLOR);
 }
 
-void LCD_DrawWall(uint8_t x, uint8_t y, uint16_t color)
+void LCD_DrawWall(uint8_t y, uint8_t x, uint16_t color)
 {
 	// A cell of a matrix is 8x8 pixels
 	// The wall is 8x8 pixels
 	// Moreover, matrix [0][0] is the top-left corner of the screen while display [0][0] is the bottom-left corner
 	// And we have to keep in mind that there's an offset of
-	// Thus, y coordinate must be inverted
+	// Thus, y coordinate must be inverted (y is represented by X)
 	// A wall is an 8x8 square with a border of 1 pixel of the specified color, with background color inside
-	y = (MAX_Y - 1) - y;
-	int xx = x * 8 + X_OFFSET;
-	int yy = y * 8 + Y_OFFSET;
+	int xx = y * 8 + X_OFFSET;
+	int yy = (MAP_X - x) * 8 + Y_OFFSET;
 	int i, j;
 	// Fill the map with bkColor
 	for (i = 0; i < 8; i++)
@@ -689,9 +683,8 @@ void LCD_DrawStandardPill(uint8_t x, uint8_t y, uint16_t color)
 	// And we have to keep in mind that there's an offset of
 	// Thus, y coordinate must be inverted
 	// Standard pill is a 2x2 square of the specified color
-	y = (MAX_Y - 1) - y;
-	int xx = x * 8 + X_OFFSET;
-	int yy = y * 8 + Y_OFFSET;
+	int xx = y * 8 + X_OFFSET;
+	int yy = (MAP_X - x) * 8 + Y_OFFSET;
 	int i, j;
 	// Fill the map with bkColor
 	for (i = 0; i < 8; i++)
@@ -710,9 +703,8 @@ void LCD_DrawPowerPill(uint8_t x, uint8_t y, uint16_t color)
 	// And we have to keep in mind that there's an offset of
 	// Thus, y coordinate must be inverted
 	// Power pill is a 4x4 square of the specified color
-	y = (MAX_Y - 1) - y;
-	int xx = x * 8 + X_OFFSET;
-	int yy = y * 8 + Y_OFFSET;
+	int xx = y * 8 + X_OFFSET;
+	int yy = (MAP_X - x) * 8 + Y_OFFSET;
 	int i, j;
 	// Fill the map with bkColor
 	for (i = 0; i < 8; i++)

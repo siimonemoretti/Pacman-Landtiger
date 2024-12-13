@@ -1,29 +1,9 @@
-/****************************************Copyright (c)**************************************************                         
-**
-**                                 http://www.powermcu.com
-**
-**--------------File Info-------------------------------------------------------------------------------
-** File name:			GLCD.h
-** Descriptions:		Has been tested SSD1289、ILI9320、R61505U、SSD1298、ST7781、SPFD5408B、ILI9325、ILI9328、
-**						HX8346A、HX8347A
-**------------------------------------------------------------------------------------------------------
-** Created by:			AVRman
-** Created date:		2012-3-10
-** Version:				1.3
-** Descriptions:		The original version
-**
-**------------------------------------------------------------------------------------------------------
-** Modified by:			
-** Modified date:	
-** Version:
-** Descriptions:		
-********************************************************************************************************/
-
 #ifndef __GLCD_H 
 #define __GLCD_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "LPC17xx.h"
+#include "../Pacman/pacman.h"
 
 /* Private define ------------------------------------------------------------*/
 
@@ -60,25 +40,16 @@
 #endif
 
 /* LCD color */
-#define White          0xFFFF
-#define Black          0x0000
-#define Grey           0xF7DE
-#define Blue           0x001F
-#define Blue2          0x051F
-#define Red            0xF800
-#define Magenta        0xF81F
-#define Green          0x07E0
-#define Cyan           0x7FFF
-#define Yellow         0xFFE0
+
 
 /******************************************************************************
 * Function Name  : RGB565CONVERT
-* Description    : 24位转换16位
+* Description    : 24位转锟斤拷16位
 * Input          : - red: R
 *                  - green: G 
 *				   - blue: B
 * Output         : None
-* Return         : RGB 颜色值
+* Return         : RGB 锟斤拷色值
 * Attention		 : None
 *******************************************************************************/
 #define RGB565CONVERT(red, green, blue)\
@@ -92,7 +63,11 @@ void LCD_Clear(uint16_t Color);
 uint16_t LCD_GetPoint(uint16_t Xpos,uint16_t Ypos);
 void LCD_SetPoint(uint16_t Xpos,uint16_t Ypos,uint16_t point);
 void LCD_DrawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color );
-void LCD_DrawPacman( uint16_t x0, uint16_t y0, uint16_t r, uint16_t color );
+void LCD_DrawPacman(uint8_t x, uint8_t y, uint8_t dir, uint16_t color);
+void LCD_DrawFloor(uint8_t x, uint8_t y);
+void LCD_DrawWall(uint8_t x, uint8_t y, uint16_t color);
+void LCD_DrawStandardPill(uint8_t x, uint8_t y, uint16_t color);
+void LCD_DrawPowerPill(uint8_t x, uint8_t y, uint16_t color);
 void PutChar( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor );
 void GUI_Text(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_t bkColor);
 

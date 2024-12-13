@@ -7,11 +7,12 @@
 
 extern pacman_t pacman;
 extern gamestate_t gamestate;
-gamestate_t prev_gs;
+gamestate_t prev_gs = GAMESTATE_GAME;
 
-void TIMER0_IRQHandler (void)
+void TIMER0_IRQHandler(void)
 {
-	if(gamestate == GAMESTATE_INTRO && gamestate != prev_gs)
+
+	if (gamestate == GAMESTATE_INTRO && gamestate != prev_gs)
 	{
 		pause_screen();
 	}
@@ -19,38 +20,32 @@ void TIMER0_IRQHandler (void)
 	{
 		// Read direction
 		dir_t curr_dir = pacman.dir;
-		// Check next position and move
-		switch(curr_dir)
+		// Check next position and if possible: move and update both pacman and map
+		switch (curr_dir)
 		{
-			case UP:
-				if (pacman.pos.y + 1 < MAX_Y)
-					pacman.pos.y++;
-				break;
-			case DOWN:
-				if (pacman.pos.y > 1)
-					pacman.pos.y--;
-				break;
-			case RIGHT:
-				if (pacman.pos.x + 1 < MAX_X)
-					pacman.pos.x++;
-				break;
-			case LEFT:
-				if (pacman.pos.x > 1)
-					pacman.pos.x--;
-				break;
-			default:
-				break;
+		case UP:
+			move_pacman(pacman.pos.x, pacman.pos.y + 1);
+			break;
+		case DOWN:
+			move_pacman(pacman.pos.x, pacman.pos.y - 1);
+			break;
+		case RIGHT:
+			move_pacman(pacman.pos.x + 1, pacman.pos.y);
+			break;
+		case LEFT:
+			move_pacman(pacman.pos.x - 1, pacman.pos.y);
+			break;
+		default:
+			break;
 		}
-		// Print pacman
-		print_pacman();
 	}
 	prev_gs = gamestate;
-  LPC_TIM0->IR = 1;			/* clear interrupt flag */
-  return;
+	LPC_TIM0->IR = 1; /* clear interrupt flag */
+	return;
 }
 
-void TIMER1_IRQHandler (void)
+void TIMER1_IRQHandler(void)
 {
-  LPC_TIM1->IR = 1;			/* clear interrupt flag */
-  return;
+	LPC_TIM1->IR = 1; /* clear interrupt flag */
+	return;
 }

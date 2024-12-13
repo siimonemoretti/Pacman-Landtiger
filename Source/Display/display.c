@@ -6,6 +6,15 @@ void pause_screen()
 	GUI_Text((120 - (2 * 8) - 4), (160-8), (uint8_t *)"PAUSE", Black, White);
 }
 
+void print_lifes()
+{
+	uint8_t i = 0;
+	for (;i < game.lifes;i++)
+	{
+		LCD_DrawHeart(5+i*8, 315, Red);
+	}
+}
+
 void draw_map(game_t game)
 {
 	LCD_Clear(BK_COLOR);
@@ -20,6 +29,7 @@ void draw_map(game_t game)
 				LCD_DrawPacman(x, y, game.pacman.dir, game.pacman.color);
 				break;
 			case FLOOR:
+			case EMPTY_FLOOR:
 				LCD_DrawFloor(x, y);
 				break;
 			case WALL:
@@ -64,7 +74,7 @@ void move_pacman(uint16_t x, uint16_t y)
 		game.pacman.y = y;
 		game.map[game.pacman.x][game.pacman.y] = PACMAN;
 		LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
-		// TODO: Update score
+		game.score += 10;
 		break;
 	case POWER_PILL:
 		game.map[game.pacman.x][game.pacman.y] = FLOOR;
@@ -73,9 +83,11 @@ void move_pacman(uint16_t x, uint16_t y)
 		game.pacman.y = y;
 		game.map[game.pacman.x][game.pacman.y] = PACMAN;
 		LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
+		game.score += 50;
 		// TODO: Update score
 		break;
 	default:
+	case EMPTY_FLOOR:	// Should never happen tho
 		break;
 	}
 }
@@ -219,13 +231,16 @@ void init_map_walls(cell_t map[MAP_X][MAP_Y])
       map[12][y] = WALL;
       map[MAP_X - 13][y] = WALL;
    }
-   // 14 Row: Line from 11 to 16
-   for (y = 11; y < 17; y++)
+   // 14 Row: Wall @ 11, 16 EMPTY in between
+   for (y = 12; y < 16; y++)
    {
-      map[13][y] = WALL;
-      map[MAP_X - 14][y] = WALL;
+      map[13][y] = EMPTY_FLOOR;
+      map[MAP_X - 14][y] = EMPTY_FLOOR;
    }
-
+	 map[13][11] = WALL;
+	 map[MAP_X - 14][11] = WALL;
+	 map[13][16] = WALL;
+	 map[MAP_X - 14][16] = WALL;
    // Set Pacman's position
    map[START_X][START_Y] = PACMAN;
 
@@ -233,8 +248,7 @@ void init_map_walls(cell_t map[MAP_X][MAP_Y])
    // 6 power pills
    // 240 standard pills
    // Of course, we can place them only in FLOOR cells
-   int seed = 0x1234;
-   srand(seed);
+   srand(0x1234);
    uint8_t num_power_pills = 0;
    uint8_t num_standard_pills = 0;
    while (num_power_pills < 6)

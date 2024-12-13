@@ -18,8 +18,10 @@ game_t game  = {
 		  .dir = NUM_DIRS,
 		  .color = Yellow,
 	 },
-	 .gamestate = GAMESTATE_INTRO,
-	 .map = {{FLOOR}}
+	 .gamestate = GAMESTATE_GAME,
+	 .map = {{FLOOR}},
+	 .score = 0,
+	 .lifes = 1
 };
 
 int main(void)
@@ -35,13 +37,12 @@ int main(void)
 	init_map_walls(game.map);
 	// Draw whole map
 	draw_map(game);
-
-	// LCD_DrawLine(0, 0, 200, 200, White);
-	// init_timer(0, 0x1312D0 ); 						/* 50ms * 25MHz = 1.25*10^6 = 0x1312D0 */
-	// init_timer(0, 0x6108 ); 						  /* 1ms * 25MHz = 25*10^3 = 0x6108 */
-	// init_timer(0, 0x4E2 ); 						    /* 500us * 25MHz = 1.25*10^3 = 0x4E2 */
-	init_timer(0, 0xC8); /* 8us * 25MHz = 200 ~= 0xC8 */
-
+	// Init timer (f = 10 Hz using board)
+	#ifndef SIMULATOR
+	init_timer(0,25000000/10); 
+	#else
+	init_timer(0,25000000/120);
+	#endif
 	enable_timer(0);
 
 	LPC_SC->PCON |= 0x1; /* power-down	mode */

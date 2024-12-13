@@ -40,7 +40,8 @@ typedef enum
 
 typedef enum
 {
-	FLOOR, // Floor is 0 so we can init the array with 0's and that will mean floor
+	FLOOR = 0, // Floor is 0 so we can init the array with 0's and that will mean floor
+	EMPTY_FLOOR,
 	PACMAN,
 	STANDARD_PILL,
 	POWER_PILL,
@@ -57,6 +58,8 @@ typedef struct
 
 typedef struct
 {
+	uint8_t lifes;
+	uint16_t score;
 	pacman_t pacman;
 	gamestate_t gamestate;
 	cell_t map[MAP_X][MAP_Y];

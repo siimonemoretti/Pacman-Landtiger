@@ -41,7 +41,7 @@ int main(void)
 	#ifndef SIMULATOR
 	init_timer(0,25000000/10); 
 	#else
-	init_timer(0,25000000/120);
+	init_timer(0,25000000/360);
 	#endif
 	enable_timer(0);
 

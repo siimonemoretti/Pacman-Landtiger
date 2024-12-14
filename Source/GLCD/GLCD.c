@@ -721,14 +721,16 @@ void LCD_DrawHeart(uint16_t x, uint16_t y, uint16_t color)
 	// We're given a 8x8 pixel space, we'll use a 1 pixel border
 	// x and y are the bottom left coordinates
 	LCD_SetPoint(x+1, y-3, color);
+	LCD_SetPoint(x+1, y-4, color);
 	uint8_t k = 0;
-	for(k = 0; k < 3; k++)
+	for(k = 0; k < 4; k++)
 	{
 		LCD_SetPoint(x+2, y-2-k, color);
 		LCD_SetPoint(x+3, y-1-k, color);
 		LCD_SetPoint(x+4, y-2-k, color);
 	}
 	LCD_SetPoint(x+5, y-3, color);
+	LCD_SetPoint(x+5, y-4, color);
 }
 
 /******************************************************************************

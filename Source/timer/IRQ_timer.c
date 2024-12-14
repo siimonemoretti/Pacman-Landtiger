@@ -53,12 +53,11 @@ void TIMER0_IRQHandler(void)
 		if (game.score != prev_sc)
 		{
 			// Update score
-			print_lifes();
 			if (game.score >= 1000)
 			{
 				game.score -= 1000;
 				game.lifes++;
-				print_lifes();
+				draw_lifes();
 			}
 			// Half is 120 pixels lons, score is 5*8 = 40 pixels, so write SCORE @ X = 80
 			GUI_Text(120 - (5*8), 3, (uint8_t*)"SCORE", White, BK_COLOR);

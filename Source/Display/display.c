@@ -6,12 +6,12 @@ void pause_screen()
 	GUI_Text((120 - (2 * 8) - 4), (160-8), (uint8_t *)"PAUSE", Black, White);
 }
 
-void print_lifes()
+void draw_lifes()
 {
 	uint8_t i = 0;
 	for (;i < game.lifes;i++)
 	{
-		LCD_DrawHeart(5+i*8, 315, Red);
+		LCD_DrawHeart(5+i*8, 310, Red);
 	}
 }
 
@@ -47,6 +47,7 @@ void draw_map(game_t game)
 			}
 		}
 	}
+	draw_lifes();
 }
 
 void move_pacman(uint16_t x, uint16_t y)

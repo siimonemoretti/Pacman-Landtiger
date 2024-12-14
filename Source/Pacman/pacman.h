@@ -16,7 +16,7 @@
 // 28 Cells in X + 2*8 offset make up 240 pixels
 #define MAP_X 28
 #define MAP_Y 28
-#define START_X 22
+#define START_X 13
 #define START_Y 5
 #define X_OFFSET 8
 #define Y_OFFSET 40
@@ -50,8 +50,8 @@ typedef enum
 
 typedef struct
 {
-	uint8_t x;
-	uint8_t y;
+	int16_t x;
+	int16_t y;
 	dir_t dir;
 	uint16_t color;
 } pacman_t;

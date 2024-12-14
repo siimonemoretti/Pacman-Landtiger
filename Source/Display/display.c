@@ -49,26 +49,28 @@ void draw_map(game_t game)
    draw_lifes();
 }
 
-void move_pacman(uint16_t x, uint16_t y)
+void move_pacman(int16_t x, int16_t y)
 {
 	 // We may get an invalid y when we need to teleport
-	 if (y == MAP_Y + 1 && game.map[x][y-1] == TELEPORT)
+	 if (y == MAP_Y)
 	 {
-		  game.map[game.pacman.x][game.pacman.y] = FLOOR;
+		  game.map[game.pacman.x][game.pacman.y] = TELEPORT;
       LCD_DrawFloor(game.pacman.x, game.pacman.y);
 		  game.pacman.x = x;
       game.pacman.y = 0;
       game.map[game.pacman.x][game.pacman.y] = PACMAN;
       LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
+		  return;
 	 }
-	 else if (y == -1 && game.map[x][0] == TELEPORT)
+	 else if (y == -1)
 	 {
-		  game.map[game.pacman.x][game.pacman.y] = FLOOR;
+		  game.map[game.pacman.x][game.pacman.y] = TELEPORT;
       LCD_DrawFloor(game.pacman.x, game.pacman.y);
 		  game.pacman.x = x;
       game.pacman.y = MAP_Y - 1;
       game.map[game.pacman.x][game.pacman.y] = PACMAN;
       LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
+		  return;
 	 } 
    else if (x < 0 || x >= MAP_X || y < 0 || y >= MAP_Y) // Checks that x and y are valid
       return;

@@ -15,7 +15,7 @@
 #define ROW_2  {W, S, W, W, W, W, S, W, W, W, W, W, S, W, W, S, W, W, W, W, W, S, W, W, W, W, S, W}
 #define ROW_3  {W, S, W, F, F, W, S, W, F, F, F, W, S, W, W, S, W, F, F, F, W, S, W, F, F, W, S, W}
 #define ROW_4  {W, S, W, W, W, W, S, W, W, W, W, W, S, W, W, S, W, W, W, W, W, S, W, W, W, W, S, W}
-#define ROW_5  {W, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, A, S, S, S, S, S, W}
+#define ROW_5  {W, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, W}
 #define ROW_6  {W, S, W, W, W, W, S, W, W, S, W, W, W, W, W, W, W, W, S, W, W, S, W, W, W, W, S, W}
 #define ROW_7  {W, S, W, W, W, W, S, W, W, S, W, W, W, W, W, W, W, W, S, W, W, S, W, W, W, W, S, W}
 #define ROW_8  {W, S, S, S, S, S, S, W, W, S, S, S, S, W, W, S, S, S, S, W, W, S, S, S, S, S, S, W}
@@ -24,13 +24,12 @@
 #define ROW_11 {F, F, F, F, F, W, S, W, W, F, F, F, F, F, F, F, F, F, F, W, W, S, W, F, F, F, F, F}
 #define ROW_12 {W, W, W, W, W, W, S, W, W, F, F, F, W, W, W, W, F, F, F, W, W, S, W, W, W, W, W, W}
 #define ROW_13 {T, F, F, F, F, F, S, F, F, F, F, W, F, F, F, F, W, F, F, F, F, S, F, F, F, F, F, T}
-#define ROW_5B {W, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, S, W}
 	
 extern game_t game;
 
 void pause_screen();
 void draw_map(game_t game);
-void move_pacman(uint16_t x, uint16_t y);
+void move_pacman(int16_t x, int16_t y);
 void draw_lifes();
 
 #endif

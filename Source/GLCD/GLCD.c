@@ -649,7 +649,7 @@ void LCD_DrawFloor(uint8_t x, uint8_t y)
 			LCD_SetPoint(xx + j, yy + i, BK_COLOR);
 }
 
-void LCD_DrawWall(uint8_t y, uint8_t x, uint16_t color)
+void LCD_DrawWall(uint8_t x, uint8_t y, uint16_t color)
 {
 	// A cell of a matrix is 8x8 pixels
 	// The wall is 8x8 pixels

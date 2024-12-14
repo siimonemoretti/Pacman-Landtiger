@@ -16,8 +16,8 @@
 // 28 Cells in X + 2*8 offset make up 240 pixels
 #define MAP_X 28
 #define MAP_Y 28
-#define START_X 13
-#define START_Y 23
+#define START_X 22
+#define START_Y 5
 #define X_OFFSET 8
 #define Y_OFFSET 40
 #define BK_COLOR Black

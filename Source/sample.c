@@ -19,7 +19,10 @@ game_t game  = {
 		  .color = Yellow,
 	 },
 	 .gamestate = GAMESTATE_GAME,
-	 .map = {{FLOOR}},
+	 .map = {
+		  ROW_0, ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8, ROW_9, ROW_10, ROW_11, ROW_12, ROW_13,
+		  ROW_13, ROW_12, ROW_11, ROW_10, ROW_9, ROW_8, ROW_7, ROW_6, ROW_5, ROW_4, ROW_3, ROW_2, ROW_1, ROW_0
+	 },
 	 .score = 0,
 	 .lifes = 1
 };
@@ -34,7 +37,7 @@ int main(void)
 	enable_RIT();
 	
 	// Initialize map
-	init_map_walls(game.map);
+	// init_map_walls(game.map);
 	// Draw whole map
 	draw_map(game);
 	// Init timer (f = 10 Hz using board)

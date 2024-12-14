@@ -41,11 +41,11 @@ typedef enum
 typedef enum
 {
 	FLOOR = 0, // Floor is 0 so we can init the array with 0's and that will mean floor
-	EMPTY_FLOOR,
 	PACMAN,
 	STANDARD_PILL,
 	POWER_PILL,
-	WALL
+	WALL,
+	TELEPORT
 } cell_t;
 
 typedef struct

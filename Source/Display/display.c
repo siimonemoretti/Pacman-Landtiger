@@ -3,98 +3,97 @@
 
 void pause_screen()
 {
-	GUI_Text((120 - (2 * 8) - 4), (160-8), (uint8_t *)"PAUSE", Black, White);
+   GUI_Text((120 - (2 * 8) - 4), (160 - 8), (uint8_t *)"PAUSE", Black, White);
 }
 
 void draw_lifes()
 {
-	uint8_t i = 0;
-	for (;i < game.lifes;i++)
-	{
-		LCD_DrawHeart(5+i*8, 310, Red);
-	}
+   uint8_t i = 0;
+   for (; i < game.lifes; i++)
+   {
+      LCD_DrawHeart(5 + i * 8, 310, Red);
+   }
 }
 
 void draw_map(game_t game)
 {
-	LCD_Clear(BK_COLOR);
-	uint8_t x, y;
-	for (x = 0; x < MAP_X; x++)
-	{
-		for (y = 0; y < MAP_Y; y++)
-		{
-			switch (game.map[x][y])
-			{
-			case PACMAN:
-				LCD_DrawPacman(x, y, game.pacman.dir, game.pacman.color);
-				break;
-			case FLOOR:
-			case EMPTY_FLOOR:
-				LCD_DrawFloor(x, y);
-				break;
-			case WALL:
-				// Test: Draw Line
-				LCD_DrawWall(y, x, Blue);
-				break;
-			case STANDARD_PILL:
-				LCD_DrawStandardPill(x, y, Cyan);
-				break;
-			case POWER_PILL:
-				LCD_DrawPowerPill(x, y, Magenta);
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	draw_lifes();
+   LCD_Clear(BK_COLOR);
+   uint8_t x, y;
+   for (x = 0; x < MAP_X; x++)
+   {
+      for (y = 0; y < MAP_Y; y++)
+      {
+         switch (game.map[x][y])
+         {
+         case PACMAN:
+            LCD_DrawPacman(x, y, game.pacman.dir, game.pacman.color);
+            break;
+         case FLOOR:
+            LCD_DrawFloor(x, y);
+            break;
+         case WALL:
+            // Test: Draw Line
+            LCD_DrawWall(y, x, Blue);
+            break;
+         case STANDARD_PILL:
+            LCD_DrawStandardPill(x, y, Cyan);
+            break;
+         case POWER_PILL:
+            LCD_DrawPowerPill(x, y, Magenta);
+            break;
+         default:
+            break;
+         }
+      }
+   }
+   draw_lifes();
 }
 
 void move_pacman(uint16_t x, uint16_t y)
 {
-	// Check that x and y are valid
-	// TODO: Implement teletransportation
-	if (x < 0 || x >= MAP_X || y < 0 || y >= MAP_Y)
-		return;
-	switch (game.map[x][y])
-	{
-	case WALL:
-		return;
-	case FLOOR:
-		game.map[game.pacman.x][game.pacman.y] = FLOOR;
-		LCD_DrawFloor(game.pacman.x, game.pacman.y);
-		game.pacman.x = x;
-		game.pacman.y = y;
-		game.map[game.pacman.x][game.pacman.y] = PACMAN;
-		LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
-		break;
-	case STANDARD_PILL:
-		game.map[game.pacman.x][game.pacman.y] = FLOOR;
-		LCD_DrawFloor(game.pacman.x, game.pacman.y);
-		game.pacman.x = x;
-		game.pacman.y = y;
-		game.map[game.pacman.x][game.pacman.y] = PACMAN;
-		LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
-		game.score += 10;
-		break;
-	case POWER_PILL:
-		game.map[game.pacman.x][game.pacman.y] = FLOOR;
-		LCD_DrawFloor(game.pacman.x, game.pacman.y);
-		game.pacman.x = x;
-		game.pacman.y = y;
-		game.map[game.pacman.x][game.pacman.y] = PACMAN;
-		LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
-		game.score += 50;
-		// TODO: Update score
-		break;
-	default:
-	case EMPTY_FLOOR:	// Should never happen tho
-		break;
-	}
+   // Check that x and y are valid
+   // TODO: Implement teletransportation
+   if (x < 0 || x >= MAP_X || y < 0 || y >= MAP_Y)
+      return;
+   switch (game.map[x][y])
+   {
+   case WALL:
+      return;
+   case FLOOR:
+      game.map[game.pacman.x][game.pacman.y] = FLOOR;
+      LCD_DrawFloor(game.pacman.x, game.pacman.y);
+      game.pacman.x = x;
+      game.pacman.y = y;
+      game.map[game.pacman.x][game.pacman.y] = PACMAN;
+      LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
+      break;
+   case STANDARD_PILL:
+      game.map[game.pacman.x][game.pacman.y] = FLOOR;
+      LCD_DrawFloor(game.pacman.x, game.pacman.y);
+      game.pacman.x = x;
+      game.pacman.y = y;
+      game.map[game.pacman.x][game.pacman.y] = PACMAN;
+      LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
+      game.score += 10;
+      break;
+   case POWER_PILL:
+      game.map[game.pacman.x][game.pacman.y] = FLOOR;
+      LCD_DrawFloor(game.pacman.x, game.pacman.y);
+      game.pacman.x = x;
+      game.pacman.y = y;
+      game.map[game.pacman.x][game.pacman.y] = PACMAN;
+      LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
+      game.score += 50;
+      // TODO: Update score
+      break;
+   default:
+      break;
+   }
 }
 
 void init_map_walls(cell_t map[MAP_X][MAP_Y])
 {
+   /*
    // Walls are predefined, layout is symmetric
    // Horizontal walls at top and bottom (row 0 and row MAP_Y - 1)
    uint8_t y;
@@ -225,7 +224,7 @@ void init_map_walls(cell_t map[MAP_X][MAP_Y])
    map[11][20] = WALL;
    map[MAP_X - 12][7] = WALL;
    map[MAP_X - 12][20] = WALL;
-   
+
    // 13 Row: Line from 12 to 15
    for (y = 12; y < 16; y++)
    {
@@ -238,10 +237,10 @@ void init_map_walls(cell_t map[MAP_X][MAP_Y])
       map[13][y] = EMPTY_FLOOR;
       map[MAP_X - 14][y] = EMPTY_FLOOR;
    }
-	 map[13][11] = WALL;
-	 map[MAP_X - 14][11] = WALL;
-	 map[13][16] = WALL;
-	 map[MAP_X - 14][16] = WALL;
+    map[13][11] = WALL;
+    map[MAP_X - 14][11] = WALL;
+    map[13][16] = WALL;
+    map[MAP_X - 14][16] = WALL;
    // Set Pacman's position
    map[START_X][START_Y] = PACMAN;
 
@@ -272,4 +271,5 @@ void init_map_walls(cell_t map[MAP_X][MAP_Y])
          num_standard_pills++;
       }
    }
+   */
 }

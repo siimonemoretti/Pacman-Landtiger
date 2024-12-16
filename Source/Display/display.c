@@ -122,6 +122,7 @@ void move_pacman(int16_t x, int16_t y)
       break;
    case POWER_PILL:
       game.map[game.pacman.x][game.pacman.y] = FLOOR;
+			game.pill_counter--;
       LCD_DrawFloor(game.pacman.x, game.pacman.y);
       game.pacman.x = x;
       game.pacman.y = y;

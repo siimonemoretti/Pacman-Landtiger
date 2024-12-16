@@ -1,5 +1,6 @@
 #ifndef _PACMAN_H_
 #define _PACMAN_H_
+#include <stdint.h>
 
 /* LCD Colors */
 #define White 0xFFFF
@@ -21,6 +22,7 @@
 #define X_OFFSET 8
 #define Y_OFFSET 40
 #define BK_COLOR Black
+#define N_POW_PILLS 6
 
 // Game's state: intro->gaming->intro (paused) and so on
 typedef enum
@@ -62,10 +64,13 @@ typedef struct
 	uint8_t lifes;
 	uint16_t score;
 	uint16_t pill_counter;
+	uint16_t power_pills[N_POW_PILLS];
 	pacman_t pacman;
 	gamestate_t gamestate;
 	cell_t map[MAP_X][MAP_Y];
 } game_t;
+
+void init_random_pow_pills();
 
 extern game_t game;
 

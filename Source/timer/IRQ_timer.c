@@ -84,6 +84,7 @@ void TIMER0_IRQHandler(void)
 
 void TIMER1_IRQHandler(void)
 {
+	static uint8_t index = 0, t = 0;
 	// This is used for countdown
 	draw_time_left();
 	if(game.time_left-- == 0)
@@ -95,6 +96,31 @@ void TIMER1_IRQHandler(void)
 		lost_screen();
 	}	
 	
+	// Check if we have to spawn a power pill
+	if(game.power_pills[index] == t)
+	{
+		// Exchange standard pill with random pill
+		int r = rand() % 220;
+		uint8_t x, y;
+		for (x = 0; x < MAP_X; x++)
+		{
+			for (y = 0; y < MAP_Y; y++)
+			{
+				if (game.map[x][y] == STANDARD_PILL)
+				{
+					r--;
+					if (r == 0)
+					{
+						game.map[x][y] = POWER_PILL;
+						LCD_DrawPowerPill(x, y, Red);
+					}
+				}
+			}
+		}
+		index++;
+	}
+	
+	t++;
 	LPC_TIM1->IR = 1; /* clear interrupt flag */
 	return;
 }

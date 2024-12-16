@@ -40,6 +40,8 @@ int main(void)
 	// Place Pacman & Draw whole map
 	game.map[game.pacman.x][game.pacman.y] = PACMAN;
 	draw_map(game);
+	// Compute random standard pills spawn time
+	init_random_pow_pills();
 	// Init timers (f = 10 Hz using board)
 	#ifndef SIMULATOR
 	init_timer(0,25000000/10);

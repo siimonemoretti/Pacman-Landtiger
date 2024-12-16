@@ -595,38 +595,51 @@ void LCD_DrawPacman(uint8_t x, uint8_t y, uint8_t dir, uint16_t color)
 	int xx = y * 8 + X_OFFSET;
 	int yy = (MAP_X - x) * 8 + Y_OFFSET;
 	int i, j;
-	// DEBUGGING TODO: Draw 4 corners
 	// Fill the map with bkColor
 	for (i = 0; i < 8; i++)
 		for (j = 0; j < 8; j++)
 			LCD_SetPoint(xx + j, yy + i, BK_COLOR);
 	// Draw pacman
-	LCD_SetPoint(xx + 2, yy + 1, color);
 	LCD_SetPoint(xx + 3, yy + 1, color);
+	LCD_SetPoint(xx + 4, yy + 1, color);
 	for (i = 0; i < 4; i++)
+	{
 		LCD_SetPoint(xx + 2 + i, yy + 2, color);
-	for (i = 0; i < 6; i++)
-		LCD_SetPoint(xx + 1 + i, yy + 3, color);
-	for (i = 0; i < 6; i++)
-		LCD_SetPoint(xx + 1 + i, yy + 4, color);
-	for (i = 0; i < 4; i++)
 		LCD_SetPoint(xx + 2 + i, yy + 5, color);
-	LCD_SetPoint(xx + 2, yy + 6, color);
+	}
+	for (i = 0; i < 6; i++)
+	{
+		LCD_SetPoint(xx + 1 + i, yy + 3, color);
+		LCD_SetPoint(xx + 1 + i, yy + 4, color);
+	}
 	LCD_SetPoint(xx + 3, yy + 6, color);
-	// Draw the eye
+	LCD_SetPoint(xx + 4, yy + 6, color);
+	// Draw the mouth
 	switch (dir)
 	{
 	case RIGHT:
-		LCD_SetPoint(xx + 4, yy + 5, Black);
+		LCD_SetPoint(xx + 6, yy + 4, Black);
+		LCD_SetPoint(xx + 6, yy + 3, Black);
+		LCD_SetPoint(xx + 5, yy + 4, Black);
+		LCD_SetPoint(xx + 5, yy + 3, Black);
 		break;
 	case DOWN:
-			 LCD_SetPoint(xx + 4, yy + 2, Black);
+		LCD_SetPoint(xx + 3, yy + 5, Black);
+		LCD_SetPoint(xx + 3, yy + 6, Black);
+		LCD_SetPoint(xx + 4, yy + 5, Black);
+		LCD_SetPoint(xx + 4, yy + 6, Black);
 		break;
 	case LEFT:
-			 LCD_SetPoint(xx + 3, yy + 5, Black);
+		LCD_SetPoint(xx + 1, yy + 4, Black);
+		LCD_SetPoint(xx + 1, yy + 3, Black);
+		LCD_SetPoint(xx + 2, yy + 4, Black);
+		LCD_SetPoint(xx + 2, yy + 3, Black);
 		break;
 	case UP:
-			 LCD_SetPoint(xx + 3, yy + 2, Black);
+		LCD_SetPoint(xx + 3, yy + 1, Black);
+		LCD_SetPoint(xx + 3, yy + 2, Black);
+		LCD_SetPoint(xx + 4, yy + 1, Black);
+		LCD_SetPoint(xx + 4, yy + 2, Black);
 		break;
 	default:
 		break;

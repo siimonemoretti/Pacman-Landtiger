@@ -1,3 +1,7 @@
-void BUTTON_init(void);
+#ifndef _BUTTON_H_
+#define _BUTTON_H_
 
-void EINT1_IRQHandler(void);
+void BUTTON_init(void);
+void EINT0_IRQHandler(void);
+
+#endif

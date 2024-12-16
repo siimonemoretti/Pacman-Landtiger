@@ -16,6 +16,10 @@ void enable_timer( uint8_t timer_num )
   {
 	LPC_TIM0->TCR = 1;
   }
+	else if ( timer_num == 1 )
+  {
+	LPC_TIM1->TCR = 1;
+  }
   return;
 }
 
@@ -24,6 +28,10 @@ void disable_timer( uint8_t timer_num )
   if ( timer_num == 0 )
   {
 	LPC_TIM0->TCR = 0;
+  }
+	else if ( timer_num == 1 )
+  {
+	LPC_TIM1->TCR = 0;
   }
   return;
 }

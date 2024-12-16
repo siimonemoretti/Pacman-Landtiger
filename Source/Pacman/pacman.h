@@ -16,8 +16,8 @@
 // 28 Cells in X + 2*8 offset make up 240 pixels
 #define MAP_X 28
 #define MAP_Y 28
-#define START_X 13
-#define START_Y 5
+#define START_X 11
+#define START_Y 13
 #define X_OFFSET 8
 #define Y_OFFSET 40
 #define BK_COLOR Black
@@ -58,8 +58,10 @@ typedef struct
 
 typedef struct
 {
+	int8_t time_left;
 	uint8_t lifes;
 	uint16_t score;
+	uint16_t pill_counter;
 	pacman_t pacman;
 	gamestate_t gamestate;
 	cell_t map[MAP_X][MAP_Y];

@@ -15,7 +15,7 @@ game_t game  = {
 	 .pacman = {
 		  .x = START_X,
 		  .y = START_Y,
-		  .dir = RIGHT,
+		  .dir = UP,
 		  .color = Yellow,
 	 },
 	 .gamestate = GAMESTATE_GAME,
@@ -24,8 +24,11 @@ game_t game  = {
 		  ROW_13, ROW_12, ROW_11, ROW_10, ROW_9, ROW_8, ROW_7, ROW_6, ROW_5, ROW_4, ROW_3, ROW_2, ROW_1, ROW_0
 	 },
 	 .score = 0,
-	 .lifes = 1
+	 .lifes = 1,
+	 .time_left = 60,
+	 .pill_counter = 220
 };
+uint8_t button_pressed;
 
 int main(void)
 {
@@ -33,23 +36,24 @@ int main(void)
 	LCD_Initialization();
 	BUTTON_init();
 	JOYSTICK_init();
-	#ifdef SIMULATOR
-	init_RIT(0x00030000);
-	#else
-	init_RIT(25000000/120);
-	#endif
-	enable_RIT();
 	
 	// Place Pacman & Draw whole map
 	game.map[game.pacman.x][game.pacman.y] = PACMAN;
 	draw_map(game);
-	// Init timer (f = 10 Hz using board)
+	// Init timers (f = 10 Hz using board)
 	#ifndef SIMULATOR
-	init_timer(0,25000000/10); 
+	init_timer(0,25000000/10);
+	init_timer(1,25000000);
+	init_RIT(0x007270E0);	
 	#else
 	init_timer(0,25000000/240);
+	init_RIT(25000000/120);
 	#endif
 	enable_timer(0);
+	enable_timer(1);
+	enable_RIT();
+	
+	
 
 	LPC_SC->PCON |= 0x1; /* power-down	mode */
 	LPC_SC->PCON &= ~(0x2);

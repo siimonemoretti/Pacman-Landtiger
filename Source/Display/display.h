@@ -28,8 +28,12 @@
 extern game_t game;
 
 void pause_screen();
+void lost_screen();
 void draw_map(game_t game);
+void win_screen();
 void move_pacman(int16_t x, int16_t y);
 void draw_lifes();
+void draw_time_left_txt();
+void draw_time_left();
 
 #endif

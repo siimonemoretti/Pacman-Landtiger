@@ -1,9 +1,20 @@
 #include "display.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void pause_screen()
 {
-   GUI_Text((120 - (2 * 8) - 4), (160 - 8), (uint8_t *)"PAUSE", Black, White);
+   GUI_Text((120 - (2 * 8) - 4), (160 - 8), (uint8_t *)"PAUSE",Yellow, BK_COLOR);
+}
+
+void lost_screen()
+{
+	GUI_Text((120 - (4 * 8) - 4), (160 - 8), (uint8_t *)"GAME OVER", Yellow, BK_COLOR);
+}
+
+void win_screen()
+{
+	GUI_Text((120 - (3 * 8) - 4), (160 - 8), (uint8_t *)"YOU WON", Yellow, BK_COLOR);
 }
 
 void draw_lifes()
@@ -11,8 +22,20 @@ void draw_lifes()
    uint8_t i = 0;
    for (; i < game.lifes; i++)
    {
-      LCD_DrawHeart(5 + i * 8, 310, Red);
+      LCD_DrawHeart(8 + i * 8, 310, Yellow);
    }
+}
+
+void draw_time_left_txt()
+{
+	GUI_Text(120 + 8, 3, (uint8_t*)"TIME:", White, BK_COLOR);
+}
+
+void draw_time_left()
+{
+	char str[3];  // 4 digits + null terminator
+	sprintf(str, "%02d", game.time_left);
+	GUI_Text(120 + 8, 15, (uint8_t*)str, White, BK_COLOR);
 }
 
 void draw_map(game_t game)
@@ -47,6 +70,7 @@ void draw_map(game_t game)
       }
    }
    draw_lifes();
+	 draw_time_left_txt();
 }
 
 void move_pacman(int16_t x, int16_t y)
@@ -88,6 +112,7 @@ void move_pacman(int16_t x, int16_t y)
       break;
    case STANDARD_PILL:
       game.map[game.pacman.x][game.pacman.y] = FLOOR;
+			game.pill_counter--;
       LCD_DrawFloor(game.pacman.x, game.pacman.y);
       game.pacman.x = x;
       game.pacman.y = y;

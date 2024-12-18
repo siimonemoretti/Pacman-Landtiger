@@ -63,6 +63,11 @@ typedef struct
 	int8_t time_left;
 	uint8_t lifes;
 	uint16_t score;
+} can_msg_t;
+
+typedef struct
+{
+	can_msg_t stats;
 	uint16_t pill_counter;
 	uint16_t power_pills[N_POW_PILLS];
 	pacman_t pacman;

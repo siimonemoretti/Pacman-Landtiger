@@ -20,7 +20,7 @@ void win_screen()
 void draw_lifes()
 {
    uint8_t i = 0;
-   for (; i < game.lifes; i++)
+   for (; i < game.stats.lifes; i++)
    {
       LCD_DrawHeart(8 + i * 8, 310, Yellow);
    }
@@ -34,7 +34,7 @@ void draw_time_left_txt()
 void draw_time_left()
 {
 	char str[3];  // 4 digits + null terminator
-	sprintf(str, "%02d", game.time_left);
+	sprintf(str, "%02d", game.stats.time_left);
 	GUI_Text(120 + 8, 15, (uint8_t*)str, White, BK_COLOR);
 }
 
@@ -118,7 +118,7 @@ void move_pacman(int16_t x, int16_t y)
       game.pacman.y = y;
       game.map[game.pacman.x][game.pacman.y] = PACMAN;
       LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
-      game.score += 10;
+      can_message.score += 10;
       break;
    case POWER_PILL:
       game.map[game.pacman.x][game.pacman.y] = FLOOR;
@@ -128,7 +128,7 @@ void move_pacman(int16_t x, int16_t y)
       game.pacman.y = y;
       game.map[game.pacman.x][game.pacman.y] = PACMAN;
       LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
-      game.score += 50;
+      can_message.score += 50;
       break;
 	 case TELEPORT:
 			game.map[game.pacman.x][game.pacman.y] = FLOOR;

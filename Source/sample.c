@@ -1,5 +1,6 @@
 #include "LPC17xx.h"
 #include "RIT/RIT.h"
+#include "Can/CAN.h"
 #include "GLCD/GLCD.h"
 #include "timer/timer.h"
 #include "Pacman/pacman.h"
@@ -18,17 +19,22 @@ game_t game  = {
 		  .dir = UP,
 		  .color = Yellow,
 	 },
-	 .gamestate = GAMESTATE_GAME,
+	 .gamestate = GAMESTATE_INTRO,
 	 .map = {
 		  ROW_0, ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8, ROW_9, ROW_10, ROW_11, ROW_12, ROW_13,
 		  ROW_13, ROW_12, ROW_11, ROW_10, ROW_9, ROW_8, ROW_7, ROW_6, ROW_5, ROW_4, ROW_3, ROW_2, ROW_1, ROW_0
 	 },
-	 .score = 0,
-	 .lifes = 1,
-	 .time_left = 60,
+	 .stats.score = 0,
+	 .stats.lifes = 1,
+	 .stats.time_left = 60,
 	 .pill_counter = 220
 };
 uint8_t button_pressed;
+can_msg_t can_message = {			/* Game updates here, then when CAN2 receives value overwrites them to game_t */
+	.time_left = 60,
+	.lifes = 1, 
+	.score = 0
+};
 
 int main(void)
 {
@@ -36,6 +42,7 @@ int main(void)
 	LCD_Initialization();
 	BUTTON_init();
 	JOYSTICK_init();
+	CAN_init();
 	
 	// Place Pacman & Draw whole map
 	game.map[game.pacman.x][game.pacman.y] = PACMAN;

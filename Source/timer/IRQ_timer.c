@@ -6,8 +6,10 @@
 #include "../Pacman/pacman.h"
 #include "../Display/display.h"
 #include "../RIT/RIT.h"
+#include "../Can/CAN.h"
 
 extern game_t game;
+extern can_msg_t can_message;
 
 void TIMER0_IRQHandler(void)
 {
@@ -24,11 +26,16 @@ void TIMER0_IRQHandler(void)
 		if (prev_gs == GAMESTATE_INTRO)
 		{
 			uint8_t x;
-			for (x = 11; x < 17; x++)
+			LCD_DrawWall(13, 11, Blue);
+			LCD_DrawWall(13, 16, Blue);
+			LCD_DrawWall(14, 11, Blue);
+			LCD_DrawWall(14, 16, Blue);
+			for (x = 12; x < 16; x++)
 			{
 				LCD_DrawFloor(13, x);
-				LCD_DrawFloor(MAP_X - 14, x);
+				LCD_DrawFloor(14, x);
 			}
+			// Re-enable counting
 			enable_timer(1);
 		}
 		// Read direction
@@ -60,23 +67,34 @@ void TIMER0_IRQHandler(void)
 			win_screen();
 		}
 		// Print score
-		if (game.score != prev_sc)
+		if (game.stats.score != prev_sc)
 		{
 			// Update score
-			if (game.score >= 1000)
+			if (game.stats.score >= 1000)
 			{
-				game.score -= 1000;
-				game.lifes++;
+				game.stats.score -= 1000;
+				can_message.score -= 1000;
+				game.stats.lifes++;
 				draw_lifes();
 			}
 			// Half is 120 pixels lons, score is 5*8 = 40 pixels, so write SCORE @ X = 80
 			GUI_Text(120 - (6*8), 3, (uint8_t*)"SCORE", White, BK_COLOR);
 			char str[5];  // 4 digits + null terminator
-			sprintf(str, "%04u", game.score);
+			sprintf(str, "%04u", game.stats.score);
 			GUI_Text(120 - (5*8), 15, (uint8_t*)str, White, BK_COLOR);
-			prev_sc = game.score;
+			prev_sc = game.stats.score;
 		}
 	}
+	/*Send CAN message*/
+	CAN_TxMsg.data[0] = can_message.score;
+	CAN_TxMsg.data[1] = can_message.score >> 8;
+	CAN_TxMsg.data[2] = can_message.lifes;
+	CAN_TxMsg.data[3] = can_message.time_left;
+	CAN_TxMsg.len = 4;
+	CAN_TxMsg.id = 2;
+	CAN_TxMsg.format = STANDARD_FORMAT;
+	CAN_TxMsg.type = DATA_FRAME;
+	CAN_wrMsg (1, &CAN_TxMsg);
 	prev_gs = game.gamestate;
 	LPC_TIM0->IR = 1; /* clear interrupt flag */
 	return;
@@ -87,7 +105,7 @@ void TIMER1_IRQHandler(void)
 	static uint8_t index = 0, t = 0;
 	// This is used for countdown
 	draw_time_left();
-	if(game.time_left-- == 0)
+	if(game.stats.time_left == 0)
 	{
 		// Lost
 		disable_timer(0);
@@ -119,7 +137,7 @@ void TIMER1_IRQHandler(void)
 		}
 		index++;
 	}
-	
+	can_message.time_left--;
 	t++;
 	LPC_TIM1->IR = 1; /* clear interrupt flag */
 	return;

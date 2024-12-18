@@ -57,7 +57,7 @@ void draw_map(game_t game)
             break;
          case WALL:
             LCD_DrawWall(x, y, Blue);
-            break;
+				 break;
          case STANDARD_PILL:
             LCD_DrawStandardPill(x, y, Cyan);
             break;

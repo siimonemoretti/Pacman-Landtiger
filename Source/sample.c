@@ -48,8 +48,9 @@ int main(void)
 	init_timer(1,25000000);
 	init_RIT(0x007270E0);	
 	#else
-	init_timer(0,25000000/240);
-	init_RIT(25000000/120);
+	init_timer(0,25000000/150);
+	init_timer(1,25000000);
+	init_RIT(0x000270E0);
 	#endif
 	enable_timer(0);
 	enable_timer(1);

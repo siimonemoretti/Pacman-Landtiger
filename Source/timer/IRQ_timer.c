@@ -8,6 +8,7 @@
 #include "../RIT/RIT.h"
 #include "../Can/CAN.h"
 #include "../adc/adc.h"
+#include "../music/music.h"
 
 extern game_t game;
 extern can_msg_t can_message;
@@ -157,20 +158,128 @@ uint16_t SinTable[45] =
 
 void TIMER2_IRQHandler (void)
 {
-	static int ticks=0;
+	static int sineticks=0;
 	/* DAC management */	
-	LPC_DAC->DACR = (SinTable[ticks]<<6);
-	ticks++;
-	if(ticks==45) ticks=0;
-
+	static int currentValue; 
+	currentValue = SinTable[sineticks];
+	currentValue -= 410;
+	currentValue /= 1;
+	currentValue += 410;
+	LPC_DAC->DACR = currentValue <<6;
+	sineticks++;
+	if(sineticks==45) sineticks=0;
 	
   LPC_TIM2->IR = 1;			/* clear interrupt flag */
   return;
 }
 
+#define RIT_SEMIMINIMA 8
+#define RIT_MINIMA 16
+#define RIT_INTERA 32
+
+#define UPTICKS 1
+
+
+//SHORTENING UNDERTALE: TOO MANY REPETITIONS
+NOTE song[] = 
+{
+    // Jingle Bells, Jingle Bells
+    {e4, time_croma}, {e4, time_croma}, {e4, time_semicroma*2},
+    {e4, time_croma}, {e4, time_croma}, {e4, time_semicroma*2},
+    {e4, time_semicroma}, {g4, time_croma}, {c4, time_semicroma}, {d4, time_semicroma},
+    {e4, time_semicroma*2},
+
+    // Oh, what fun it is to ride
+    {f4, time_croma}, {f4, time_croma}, {f4, time_croma}, {f4, time_croma},
+    {f4, time_semicroma}, {e4, time_semicroma}, {e4, time_croma}, {e4, time_croma},
+    {e4, time_croma}, {d4, time_croma}, {d4, time_croma}, {e4, time_croma},
+    {d4, time_croma*2}, {g4, time_croma*2},
+
+    // In a one-horse open sleigh!
+    {e4, time_croma}, {e4, time_croma}, {e4, time_semicroma*2},
+    {e4, time_croma}, {e4, time_croma}, {e4, time_semicroma*2},
+    {e4, time_semicroma}, {g4, time_croma}, {c4, time_semicroma}, {d4, time_semicroma},
+    {e4, time_semicroma*2},
+
+    // Repeat the melody for other lines as necessary!
+};
+/* NOTE song[] = 
+{
+	// 1
+	{d3, time_semicroma},
+	{d3, time_semicroma},
+	{d4, time_croma},
+	{a3, time_croma},
+	{pause, time_semicroma},
+	{a3b, time_semicroma},
+	{pause, time_semicroma},
+	{g3, time_croma},
+	{f3, time_semicroma*2},
+	{d3, time_semicroma},
+	{f3, time_semicroma},
+	{g3, time_semicroma},
+	// 2
+	{c3, time_semicroma},
+	{c3, time_semicroma},
+	{d4, time_croma},
+	{a3, time_croma},
+	{pause, time_semicroma},
+	{a3b, time_semicroma},
+	{pause, time_semicroma},
+	{g3, time_croma},
+	{f3, time_semicroma*2},
+	{d3, time_semicroma},
+	{f3, time_semicroma},
+	{g3, time_semicroma},
+	// 3
+	{c3b, time_semicroma},
+	{c3b, time_semicroma},
+	{d4, time_croma},
+	{a3, time_croma},
+	{pause, time_semicroma},
+	{a3b, time_semicroma},
+	{pause, time_semicroma},
+	{g3, time_croma},
+	{f3, time_semicroma*2},
+	{d3, time_semicroma},
+	{f3, time_semicroma},
+	{g3, time_semicroma},
+	// 4
+	{a2b, time_semicroma},
+	{a2b, time_semicroma},
+	{d4, time_croma},
+	{a3, time_croma},
+	{pause, time_semicroma},
+	{a3b, time_semicroma},
+	{pause, time_semicroma},
+	{g3, time_croma},
+	{f3, time_semicroma*2},
+	{d3, time_semicroma},
+	{f3, time_semicroma},
+	{g3, time_semicroma},
+	// 5
+	
+}; */
+
 void TIMER3_IRQHandler (void)
 {
-	ADC_start_conversion();
+	static int currentNote = 0;
+	static int ticks = 0;
+	if(!isNotePlaying())
+	{
+		++ticks;
+		if(ticks == UPTICKS)
+		{
+			ticks = 0;
+			playNote(song[currentNote++]);
+		}
+	}
+	
+	if(currentNote == (sizeof(song) / sizeof(song[0])))
+	{
+		currentNote = 0;
+	}
+	
   LPC_TIM3->IR = 1;			/* clear interrupt flag */
   return;
 }

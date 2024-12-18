@@ -32,7 +32,7 @@ game_t game  = {
 };
 uint8_t button_pressed;
 can_msg_t can_message = {			/* Game updates here, then when CAN2 receives value overwrites them to game_t */
-	.time_left = 10,
+	.time_left = 60,
 	.lifes = 1, 
 	.score = 0
 };
@@ -59,7 +59,7 @@ int main(void)
 	#ifndef SIMULATOR
 	init_timer(0,25000000/10);
 	init_timer(1,25000000);
-	init_timer(3,25000000/20);		/* Timer for ADC */
+	init_timer(3,25000000/10);		/* Timer for ADC */
 	init_RIT(0x007270E0);	
 	#else
 	init_timer(0,25000000/150);
@@ -71,8 +71,6 @@ int main(void)
 	enable_RIT();
 	enable_timer(3);
 	ADC_init();
-	
-  
 	
 	LPC_SC->PCON |= 0x1; /* power-down	mode */
 	LPC_SC->PCON &= ~(0x2);

@@ -29,8 +29,13 @@ const int freqs[8]={2120,1890,1684,1592,1417,1263,1125,1062};
 523Hz	k=1062		c5
 */
 
+
+const int melody_freqs[] = {2120, 2120, 1890, 1890, 1684, 1684, 1890}; // Notes: C4, C4, D4, D4, E4, E4, D4
+const int melody_durations[] = {500, 500, 500, 500, 500, 500, 500};   // Durations in ms
+const int melody_length = 7;
+
 void ADC_IRQHandler(void) {
-  AD_current = ((LPC_ADC->ADGDR>>4) & 0xFFF);/* Read Conversion Result             */
+  /*AD_current = ((LPC_ADC->ADGDR>>4) & 0xFFF); //Read Conversion Result
   if(AD_current != AD_last){
 		disable_timer(2);
 		reset_timer(2);
@@ -38,6 +43,16 @@ void ADC_IRQHandler(void) {
 		enable_timer(2);
 		
 		AD_last = AD_current;
-  }
+  }*/
+	static int i = 0;
+  disable_timer(2);
+  reset_timer(2);
+  init_timer(2, melody_freqs[i]);  // Set the frequency
+  enable_timer(2);
+  if(++i == melody_length)
+	{
+			i = 0;
+	}
+	
 	
 }

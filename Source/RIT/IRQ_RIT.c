@@ -1,5 +1,6 @@
 #include "LPC17xx.h"
 #include "RIT.h"
+#include "../adc/adc.h"
 #include "../Pacman/pacman.h"
 
 extern game_t game;

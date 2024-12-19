@@ -19,8 +19,8 @@
 #define ROW_6  {W, S, W, W, W, W, S, W, W, S, W, W, W, W, W, W, W, W, S, W, W, S, W, W, W, W, S, W}
 #define ROW_7  {W, S, W, W, W, W, S, W, W, S, W, W, W, W, W, W, W, W, S, W, W, S, W, W, W, W, S, W}
 #define ROW_8  {W, S, S, S, S, S, S, W, W, S, S, S, S, W, W, S, S, S, S, W, W, S, S, S, S, S, S, W}
-#define ROW_9  {W, W, W, W, W, W, S, W, W, W, W, F, F, W, W, F, F, W, W, W, W, S, W, W, W, W, W, W}
-#define ROW_10 {F, F, F, F, F, W, S, W, W, W, W, F, F, F, F, F, F, W, W, W, W, S, W, F, F, F, F, F}
+#define ROW_9  {W, W, W, W, W, W, S, W, W, W, W, S, S, W, W, S, S, W, W, W, W, S, W, W, W, W, W, W}
+#define ROW_10 {F, F, F, F, F, W, S, W, W, W, W, S, S, S, S, S, S, W, W, W, W, S, W, F, F, F, F, F}
 #define ROW_11 {F, F, F, F, F, W, S, W, W, F, F, F, F, F, F, F, F, F, F, W, W, S, W, F, F, F, F, F}
 #define ROW_12 {W, W, W, W, W, W, S, W, W, F, F, F, W, W, W, W, F, F, F, W, W, S, W, W, W, W, W, W}
 #define ROW_13 {T, F, F, F, F, F, S, F, F, F, F, W, F, F, F, F, W, F, F, F, F, S, F, F, F, F, F, T}
@@ -30,6 +30,7 @@ extern can_msg_t can_message;
 
 void pause_screen();
 void lost_screen();
+void draw_cell(uint8_t x, uint8_t y, cell_t type);
 void draw_map(game_t game);
 void win_screen();
 void move_pacman(int16_t x, int16_t y);

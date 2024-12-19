@@ -68,6 +68,10 @@ void TIMER0_IRQHandler(void)
 			disable_RIT();
 			win_screen();
 		}
+		// Draw back original cell's type, then move ghost
+		draw_cell(game.ghost.x, game.ghost.y, game.map[game.ghost.x][game.ghost.y]);
+		move_ghost();
+		
 		// Print score
 		if (game.stats.score != prev_sc)
 		{
@@ -123,6 +127,14 @@ void TIMER1_IRQHandler(void)
 		disable_timer(2);
 		disable_timer(3);
 	}	
+	
+	// Check Ghost's mode
+	if (game.ghost.frightened_cnt > 0) {
+		game.ghost.frightened_cnt--;
+		game.ghost.mode = FRIGHTENED_MODE;
+	} else {
+		game.ghost.mode = CHASE_MODE;
+	}
 	
 	// Check if we have to spawn a power pill
 	if(game.power_pills[index] == t)

@@ -38,37 +38,38 @@ void draw_time_left()
 	GUI_Text(120 + 8, 15, (uint8_t*)str, White, BK_COLOR);
 }
 
+void draw_cell(uint8_t x, uint8_t y, cell_t type)
+{
+	switch (type)
+  {
+  case PACMAN:
+     LCD_DrawPacman(x, y, game.pacman.dir, game.pacman.color);
+     break;
+     break;
+  case WALL:
+     LCD_DrawWall(x, y, Blue);
+	   break;
+  case STANDARD_PILL:
+     LCD_DrawStandardPill(x, y, Cyan);
+     break;
+  case POWER_PILL:
+     LCD_DrawPowerPill(x, y, Magenta);
+     break;
+  case FLOOR:
+		LCD_DrawFloor(x, y);
+	case TELEPORT:
+  default:
+     break;
+  }
+}
+
 void draw_map(game_t game)
 {
    LCD_Clear(BK_COLOR);
    uint8_t x, y;
    for (x = 0; x < MAP_X; x++)
-   {
       for (y = 0; y < MAP_Y; y++)
-      {
-         switch (game.map[x][y])
-         {
-         case PACMAN:
-            LCD_DrawPacman(x, y, game.pacman.dir, game.pacman.color);
-            break;
-         case FLOOR:
-				 case TELEPORT:
-            // LCD_DrawFloor(x, y);
-            break;
-         case WALL:
-            LCD_DrawWall(x, y, Blue);
-				 break;
-         case STANDARD_PILL:
-            LCD_DrawStandardPill(x, y, Cyan);
-            break;
-         case POWER_PILL:
-            LCD_DrawPowerPill(x, y, Magenta);
-            break;
-         default:
-            break;
-         }
-      }
-   }
+				draw_cell(x,y,game.map[x][y]);
    draw_lifes();
 	 draw_time_left_txt();
 }
@@ -129,6 +130,9 @@ void move_pacman(int16_t x, int16_t y)
       game.map[game.pacman.x][game.pacman.y] = PACMAN;
       LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
       can_message.score += 50;
+	   /* Switch Ghost's mode to frightened */
+		game.ghost.mode = FRIGHTENED_MODE;
+	   game.ghost.frightened_cnt = 10;
       break;
 	 case TELEPORT:
 			game.map[game.pacman.x][game.pacman.y] = FLOOR;

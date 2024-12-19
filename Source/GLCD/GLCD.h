@@ -65,11 +65,11 @@ void LCD_SetPoint(uint16_t Xpos,uint16_t Ypos,uint16_t point);
 void LCD_DrawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color );
 void LCD_DrawPacman(uint8_t x, uint8_t y, uint8_t dir, uint16_t color);
 void LCD_DrawFloor(uint8_t x, uint8_t y);
-void LCD_DrawWall(uint8_t x, uint8_t y, uint16_t color);
-void LCD_DrawStandardPill(uint8_t x, uint8_t y, uint16_t color);
-void LCD_DrawPowerPill(uint8_t x, uint8_t y, uint16_t color);
-void LCD_DrawHeart(uint16_t x, uint16_t y, uint16_t color);
-void LCD_DrawGhost(uint8_t x, uint8_t y, uint16_t color, uint16_t dir);
+void LCD_DrawWall(uint8_t x, uint8_t y, uint16_t);
+void LCD_DrawStandardPill(uint8_t, uint8_t, uint16_t);
+void LCD_DrawPowerPill(uint8_t, uint8_t, uint16_t);
+void LCD_DrawHeart(uint16_t, uint16_t, uint16_t);
+void LCD_DrawGhost(uint8_t, uint8_t, uint16_t);
 void PutChar( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor );
 void GUI_Text(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_t bkColor);
 

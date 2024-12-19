@@ -688,6 +688,7 @@ void LCD_DrawWall(uint8_t x, uint8_t y, uint16_t color)
 		LCD_SetPoint(xx + i, yy + 7, color);
 	}
 }
+
 void LCD_DrawStandardPill(uint8_t x, uint8_t y, uint16_t color)
 {
 	// A cell of a matrix is 8x8 pixels
@@ -746,42 +747,21 @@ void LCD_DrawHeart(uint16_t x, uint16_t y, uint16_t color)
 	LCD_SetPoint(x+5, y-4, color);
 }
 
-static const uint8_t ghost_d[6][6] = {
-	{1, 0, 1, 1, 0, 1},
-	{1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1},
-	{1, 2, 1, 1, 2, 1},
-	{0, 1, 1, 1, 1, 0},
-	{0, 0, 1, 1, 0, 0},
-};
-
-static const uint8_t ghost_u[6][6] = {
-  {0, 0, 1, 1, 0, 0},
-	{0, 1, 1, 1, 1, 0},
-	{1, 2, 1, 1, 2, 1},
-	{1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1},
-  {1, 0, 1, 1, 0, 1},
-};
-
-void LCD_DrawGhost(uint8_t x, uint8_t y, uint16_t color, uint16_t dir)
+void LCD_DrawGhost(uint8_t x, uint8_t y, uint16_t color)
 {
 	int xx = y * 8 + X_OFFSET;
 	int yy = (MAP_X - x) * 8 + Y_OFFSET;
 	
-	// TODO: direction of ghost
-	
 	int i, k;
 	for (i = 0; i < 6; i++) {
 		for (k = 0; k < 6; k++) {
-			if (ghost_u[i][k] == 1)
+			if (ghost[i][k] == 1)
 				LCD_SetPoint(xx + 1 + k, yy + 1 + i, color);
-			else if (ghost_u[i][k] == 2)
+			else if (ghost[i][k] == 2)
 				LCD_SetPoint(xx + 1 + k, yy + 1 + i, White);
 		}
 	}
 }
-
 
 void PutChar(uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor)
 {

@@ -58,6 +58,30 @@ typedef struct
 	uint16_t color;
 } pacman_t;
 
+typedef enum
+{
+	CHASE_MODE,
+	FRIGHTENED_MODE
+} ghost_mode_t;
+
+static const uint8_t ghost[6][6] = {
+  {0, 0, 1, 1, 0, 0},
+	{0, 1, 1, 1, 1, 0},
+	{1, 2, 1, 1, 2, 1},
+	{1, 1, 1, 1, 1, 1},
+	{1, 1, 1, 1, 1, 1},
+  {1, 0, 1, 1, 0, 1},
+};
+
+typedef struct
+{
+	int16_t x;
+	int16_t y;
+	ghost_mode_t mode;
+	int8_t visible;
+	int8_t frightened_cnt;
+} ghost_t;
+
 typedef struct
 {
 	int8_t time_left;
@@ -67,15 +91,17 @@ typedef struct
 
 typedef struct
 {
-	can_msg_t stats;
-	uint16_t pill_counter;
-	uint16_t power_pills[N_POW_PILLS];
+	ghost_t ghost;
 	pacman_t pacman;
+	can_msg_t stats;
 	gamestate_t gamestate;
+	uint16_t pill_counter;
 	cell_t map[MAP_X][MAP_Y];
+	uint16_t power_pills[N_POW_PILLS];
 } game_t;
 
 void init_random_pow_pills();
+void move_ghost();
 
 extern game_t game;
 

@@ -1,7 +1,9 @@
 #include "LPC17xx.h"
+#ifndef SIMULATOR
 #include "adc/adc.h"
-#include "RIT/RIT.h"
 #include "Can/CAN.h"
+#endif
+#include "RIT/RIT.h"
 #include "GLCD/GLCD.h"
 #include "timer/timer.h"
 #include "Pacman/pacman.h"
@@ -20,7 +22,7 @@ game_t game  = {
 		  .dir = UP,
 		  .color = Yellow,
 	 },
-	 .gamestate = GAMESTATE_INTRO,
+	 .gamestate = GAMESTATE_GAME,
 	 .map = {
 		  ROW_0, ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8, ROW_9, ROW_10, ROW_11, ROW_12, ROW_13,
 		  ROW_13, ROW_12, ROW_11, ROW_10, ROW_9, ROW_8, ROW_7, ROW_6, ROW_5, ROW_4, ROW_3, ROW_2, ROW_1, ROW_0
@@ -28,8 +30,12 @@ game_t game  = {
 	 .stats.score = 0,
 	 .stats.lifes = 1,
 	 .stats.time_left = 60,
-	 .pill_counter = 220
+	 .pill_counter = 240,
+	 .ghost.x = 16,
+	 .ghost.y = 13,
+	 .ghost.mode = CHASE_MODE
 };
+
 uint8_t button_pressed;
 can_msg_t can_message = {			/* Game updates here, then when CAN2 receives value overwrites them to game_t */
 	.time_left = 60,
@@ -55,7 +61,6 @@ int main(void)
 	// Place Pacman & Draw whole map
 	game.map[game.pacman.x][game.pacman.y] = PACMAN;
 	draw_map(game);
-	LCD_DrawGhost(16, 13, Red, UP);
 	// Compute random standard pills spawn time
 	init_random_pow_pills();
 	// Init timers (f = 10 Hz using board)
@@ -66,14 +71,16 @@ int main(void)
 	init_RIT(0x007270E0);	
 	#else
 	init_timer(0,25000000/150);
-	init_timer(1,25000000);
+	init_timer(1,25000000/60);	/* In simulation we don't wait for an entire second */
 	init_RIT(0x000270E0);
 	#endif
 	enable_timer(0);
 	enable_timer(1);
 	enable_RIT();
+	#ifndef SIMULATOR				/* With the simulator we don't play the music */
 	enable_timer(3);
 	ADC_init();
+	#endif
 	
 	LPC_SC->PCON |= 0x1; /* power-down	mode */
 	LPC_SC->PCON &= ~(0x2);

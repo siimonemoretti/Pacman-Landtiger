@@ -9,6 +9,9 @@ extern uint8_t button_pressed;
 /* Exploiting RIT functionalities to implement polling on the joystick */
 void RIT_IRQHandler (void)
 {
+	#ifdef SIMULATOR
+	LPC_RIT->RICOUNTER = 0;
+	#endif
 	if (button_pressed == 1)
 	{
 		if ( (LPC_GPIO2->FIOPIN & (1<<10)) == 0 )
@@ -40,7 +43,9 @@ void RIT_IRQHandler (void)
 	else if ((LPC_GPIO1->FIOPIN & (1<<26)) == 0) {
 		game.pacman.dir = DOWN;
 	}
+	#ifndef SIMULATOR
 	LPC_RIT->RICOUNTER = 0;
+	#endif
   LPC_RIT->RICTRL |= 0x1;	/* clear interrupt flag */
   return;
 }

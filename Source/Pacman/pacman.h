@@ -36,7 +36,7 @@ typedef enum
 	RIGHT,	// 00
 	DOWN,		// 01
 	LEFT,		// 10
-	UP,		// 11
+	UP,		  // 11
 	NUM_DIRS // 4 == The number of possible directions!
 } dir_t;
 

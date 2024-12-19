@@ -87,6 +87,7 @@ void TIMER0_IRQHandler(void)
 			prev_sc = game.stats.score;
 		}
 	}
+	#ifndef SIMULATOR
 	/*Send CAN message*/
 	CAN_TxMsg.data[0] = can_message.score;
 	CAN_TxMsg.data[1] = can_message.score >> 8;
@@ -97,6 +98,11 @@ void TIMER0_IRQHandler(void)
 	CAN_TxMsg.format = STANDARD_FORMAT;
 	CAN_TxMsg.type = DATA_FRAME;
 	CAN_wrMsg (1, &CAN_TxMsg);
+	#else
+	game.stats.score = can_message.score;
+	game.stats.lifes = can_message.lifes;
+	game.stats.time_left = can_message.time_left;
+	#endif
 	prev_gs = game.gamestate;
 	LPC_TIM0->IR = 1; /* clear interrupt flag */
 	return;

@@ -43,7 +43,9 @@ int main(void)
 	LCD_Initialization();
 	BUTTON_init();
 	JOYSTICK_init();
+	#ifndef SIMULATOR
 	CAN_init();
+	#endif
 	LPC_SC->PCONP       |=  (1<<22);      /* Enable power to TIM2 block          */
   LPC_SC->PCONP       |=  (1<<23);      /* Enable power to TIM3 block          */
 	LPC_PINCON->PINSEL1 |=  (1<<21);			/* Setting P0.26 out to speaker        */
@@ -53,6 +55,7 @@ int main(void)
 	// Place Pacman & Draw whole map
 	game.map[game.pacman.x][game.pacman.y] = PACMAN;
 	draw_map(game);
+	LCD_DrawGhost(16, 13, Red, UP);
 	// Compute random standard pills spawn time
 	init_random_pow_pills();
 	// Init timers (f = 10 Hz using board)

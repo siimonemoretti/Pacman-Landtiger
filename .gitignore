@@ -10,6 +10,3 @@ RTE/
 
 ## event record during  debug
 *.scvd
-
-# Ignore project/IDE files
-*.uvprojx

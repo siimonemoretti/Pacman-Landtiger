@@ -746,23 +746,48 @@ void LCD_DrawHeart(uint16_t x, uint16_t y, uint16_t color)
 	LCD_SetPoint(x+5, y-4, color);
 }
 
-/******************************************************************************
- * Function Name  : PutChar
- * Description    : ��Lcd��������λ����ʾһ���ַ�
- * Input          : - Xpos: ˮƽ����
- *                  - Ypos: ��ֱ����
- *				   - ASCI: ��ʾ���ַ�
- *				   - charColor: �ַ���ɫ
- *				   - bkColor: ������ɫ
- * Output         : None
- * Return         : None
- * Attention		 : None
- *******************************************************************************/
+static const uint8_t ghost_d[6][6] = {
+	{1, 0, 1, 1, 0, 1},
+	{1, 1, 1, 1, 1, 1},
+	{1, 1, 1, 1, 1, 1},
+	{1, 2, 1, 1, 2, 1},
+	{0, 1, 1, 1, 1, 0},
+	{0, 0, 1, 1, 0, 0},
+};
+
+static const uint8_t ghost_u[6][6] = {
+  {0, 0, 1, 1, 0, 0},
+	{0, 1, 1, 1, 1, 0},
+	{1, 2, 1, 1, 2, 1},
+	{1, 1, 1, 1, 1, 1},
+	{1, 1, 1, 1, 1, 1},
+  {1, 0, 1, 1, 0, 1},
+};
+
+void LCD_DrawGhost(uint8_t x, uint8_t y, uint16_t color, uint16_t dir)
+{
+	int xx = y * 8 + X_OFFSET;
+	int yy = (MAP_X - x) * 8 + Y_OFFSET;
+	
+	// TODO: direction of ghost
+	
+	int i, k;
+	for (i = 0; i < 6; i++) {
+		for (k = 0; k < 6; k++) {
+			if (ghost_u[i][k] == 1)
+				LCD_SetPoint(xx + 1 + k, yy + 1 + i, color);
+			else if (ghost_u[i][k] == 2)
+				LCD_SetPoint(xx + 1 + k, yy + 1 + i, White);
+		}
+	}
+}
+
+
 void PutChar(uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor)
 {
 	uint16_t i, j;
 	uint8_t buffer[16], tmp_char;
-	GetASCIICode(buffer, ASCI); /* ȡ��ģ���� */
+	GetASCIICode(buffer, ASCI); 
 	for (i = 0; i < 16; i++)
 	{
 		tmp_char = buffer[i];
@@ -770,28 +795,16 @@ void PutChar(uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uin
 		{
 			if (((tmp_char >> (7 - j)) & 0x01) == 0x01)
 			{
-				LCD_SetPoint(Xpos + j, Ypos + i, charColor); /* �ַ���ɫ */
+				LCD_SetPoint(Xpos + j, Ypos + i, charColor);
 			}
 			else
 			{
-				LCD_SetPoint(Xpos + j, Ypos + i, bkColor); /* ������ɫ */
+				LCD_SetPoint(Xpos + j, Ypos + i, bkColor);
 			}
 		}
 	}
 }
 
-/******************************************************************************
- * Function Name  : GUI_Text
- * Description    : ��ָ��������ʾ�ַ���
- * Input          : - Xpos: ������
- *                  - Ypos: ������
- *				   - str: �ַ���
- *				   - charColor: �ַ���ɫ
- *				   - bkColor: ������ɫ
- * Output         : None
- * Return         : None
- * Attention		 : None
- *******************************************************************************/
 void GUI_Text(uint16_t Xpos, uint16_t Ypos, uint8_t *str, uint16_t Color, uint16_t bkColor)
 {
 	uint8_t TempChar;

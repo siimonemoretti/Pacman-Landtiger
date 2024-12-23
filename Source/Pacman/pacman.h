@@ -1,6 +1,7 @@
 #ifndef _PACMAN_H_
 #define _PACMAN_H_
 #include <stdint.h>
+#include "../a_star/a_star.h"
 
 /* LCD Colors */
 #define White 0xFFFF
@@ -36,7 +37,7 @@ typedef enum
 	RIGHT,	// 00
 	DOWN,		// 01
 	LEFT,		// 10
-	UP,		  // 11
+	UP,		// 11
 	NUM_DIRS // 4 == The number of possible directions!
 } dir_t;
 
@@ -65,12 +66,12 @@ typedef enum
 } ghost_mode_t;
 
 static const uint8_t ghost[6][6] = {
-  {0, 0, 1, 1, 0, 0},
-	{0, 1, 1, 1, 1, 0},
-	{1, 2, 1, 1, 2, 1},
-	{1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1},
-  {1, 0, 1, 1, 0, 1},
+	 {0, 0, 1, 1, 0, 0},
+	 {0, 1, 1, 1, 1, 0},
+	 {1, 2, 1, 1, 2, 1},
+	 {1, 1, 1, 1, 1, 1},
+	 {1, 1, 1, 1, 1, 1},
+	 {1, 0, 1, 1, 0, 1},
 };
 
 typedef struct

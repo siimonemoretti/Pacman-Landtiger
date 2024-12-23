@@ -129,7 +129,7 @@ dir_t a_star(cell_t map[MAP_X][MAP_Y], int start_x, int start_y, int goal_x, int
          int nx = x + dx[i];
          int ny = y + dy[i];
 
-         // Check if neighbor is valid
+         // Check if neighbor is valid (inside the map, not a wall or teleport)
          if (nx >= 0 && nx < MAP_X && ny >= 0 && ny < MAP_Y && map[nx][ny] != WALL && map[nx][ny] != TELEPORT)
          {
             int newG = current.g + 1; // Cost to reach this neighbor
@@ -148,5 +148,5 @@ dir_t a_star(cell_t map[MAP_X][MAP_Y], int start_x, int start_y, int goal_x, int
    }
    // If no path found
    pq_free(&open);
-   return NONE;
+   return NUM_DIRS; // Return an invalid direction
 }

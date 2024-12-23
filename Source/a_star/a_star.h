@@ -4,6 +4,7 @@
 /**
  * @brief A* algorithm implementation for PacMan ghost movement
  * Heuristic: Manhattan distance
+ * Supposing ghost won't teleport nor go through walls
  */
 
 #include <stdlib.h>

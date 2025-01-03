@@ -71,7 +71,41 @@ void TIMER0_IRQHandler(void)
 		// Draw back original cell's type, then move ghost
 		draw_cell(game.ghost.x, game.ghost.y, game.map[game.ghost.x][game.ghost.y]);
 		move_ghost();
-		
+		// Check if ghost caught pacman
+		if (game.ghost.x == game.pacman.x && game.ghost.y == game.pacman.y)
+		{
+			// Check ghost's mode
+			if (game.ghost.mode == CHASE_MODE)
+			{
+				// Decrease remaining lifes
+				game.stats.lifes--;
+				if (game.stats.lifes <= 0)
+				{
+					disable_timer(0);
+					disable_timer(1);
+					disable_timer(2);
+					disable_timer(3);
+					disable_RIT();
+					lost_screen();
+				}
+				else
+				{
+					// Respawn pacman
+					game.pacman.x = 13;
+					game.pacman.y = 13;
+					game.pacman.dir = RIGHT;
+					LCD_DrawPacman(13, 13, RIGHT, Yellow);
+					draw_lifes();
+				}
+			}
+			else if (game.ghost.mode == FRIGHTENED_MODE)
+			{
+				// Increase score
+				game.stats.score += 100;
+				can_message.score += 100;
+				// TODO : Respawn ghost after 3 seconds
+			}
+		}
 		// Print score
 		if (game.stats.score != prev_sc)
 		{
@@ -84,14 +118,14 @@ void TIMER0_IRQHandler(void)
 				draw_lifes();
 			}
 			// Half is 120 pixels lons, score is 5*8 = 40 pixels, so write SCORE @ X = 80
-			GUI_Text(120 - (6*8), 3, (uint8_t*)"SCORE", White, BK_COLOR);
-			char str[5];  // 4 digits + null terminator
+			GUI_Text(120 - (6 * 8), 3, (uint8_t *)"SCORE", White, BK_COLOR);
+			char str[5]; // 4 digits + null terminator
 			sprintf(str, "%04u", game.stats.score);
-			GUI_Text(120 - (5*8), 15, (uint8_t*)str, White, BK_COLOR);
+			GUI_Text(120 - (5 * 8), 15, (uint8_t *)str, White, BK_COLOR);
 			prev_sc = game.stats.score;
 		}
 	}
-	#ifndef SIMULATOR
+#ifndef SIMULATOR
 	/*Send CAN message*/
 	CAN_TxMsg.data[0] = can_message.score;
 	CAN_TxMsg.data[1] = can_message.score >> 8;
@@ -101,12 +135,12 @@ void TIMER0_IRQHandler(void)
 	CAN_TxMsg.id = 2;
 	CAN_TxMsg.format = STANDARD_FORMAT;
 	CAN_TxMsg.type = DATA_FRAME;
-	CAN_wrMsg (1, &CAN_TxMsg);
-	#else
+	CAN_wrMsg(1, &CAN_TxMsg);
+#else
 	game.stats.score = can_message.score;
 	game.stats.lifes = can_message.lifes;
 	game.stats.time_left = can_message.time_left;
-	#endif
+#endif
 	prev_gs = game.gamestate;
 	LPC_TIM0->IR = 1; /* clear interrupt flag */
 	return;
@@ -117,7 +151,7 @@ void TIMER1_IRQHandler(void)
 	static uint8_t index = 0, t = 0;
 	// This is used for countdown
 	draw_time_left();
-	if(game.stats.time_left == 0)
+	if (game.stats.time_left == 0)
 	{
 		// Lost
 		disable_timer(0);
@@ -126,18 +160,21 @@ void TIMER1_IRQHandler(void)
 		lost_screen();
 		disable_timer(2);
 		disable_timer(3);
-	}	
-	
+	}
+
 	// Check Ghost's mode
-	if (game.ghost.frightened_cnt > 0) {
+	if (game.ghost.frightened_cnt > 0)
+	{
 		game.ghost.frightened_cnt--;
 		game.ghost.mode = FRIGHTENED_MODE;
-	} else {
+	}
+	else
+	{
 		game.ghost.mode = CHASE_MODE;
 	}
-	
+
 	// Check if we have to spawn a power pill
-	if(game.power_pills[index] == t)
+	if (game.power_pills[index] == t)
 	{
 		// Exchange standard pill with random pill
 		int r = rand() % 220;
@@ -166,29 +203,29 @@ void TIMER1_IRQHandler(void)
 }
 
 uint16_t SinTable[45] =
-{
-    410, 467, 523, 576, 627, 673, 714, 749, 778,
-    799, 813, 819, 817, 807, 789, 764, 732, 694, 
-    650, 602, 550, 495, 438, 381, 324, 270, 217,
-    169, 125, 87 , 55 , 30 , 12 , 2  , 0  , 6  ,   
-    20 , 41 , 70 , 105, 146, 193, 243, 297, 353
-};
+	 {
+		  410, 467, 523, 576, 627, 673, 714, 749, 778,
+		  799, 813, 819, 817, 807, 789, 764, 732, 694,
+		  650, 602, 550, 495, 438, 381, 324, 270, 217,
+		  169, 125, 87, 55, 30, 12, 2, 0, 6,
+		  20, 41, 70, 105, 146, 193, 243, 297, 353};
 
-void TIMER2_IRQHandler (void)
+void TIMER2_IRQHandler(void)
 {
-	static int sineticks=0;
-	/* DAC management */	
-	static int currentValue; 
+	static int sineticks = 0;
+	/* DAC management */
+	static int currentValue;
 	currentValue = SinTable[sineticks];
 	currentValue -= 410;
 	currentValue /= 1;
 	currentValue += 410;
-	LPC_DAC->DACR = currentValue <<6;
+	LPC_DAC->DACR = currentValue << 6;
 	sineticks++;
-	if(sineticks==45) sineticks=0;
-	
-  LPC_TIM2->IR = 1;			/* clear interrupt flag */
-  return;
+	if (sineticks == 45)
+		sineticks = 0;
+
+	LPC_TIM2->IR = 1; /* clear interrupt flag */
+	return;
 }
 
 #define RIT_SEMIMINIMA 8
@@ -197,31 +234,54 @@ void TIMER2_IRQHandler (void)
 
 #define UPTICKS 1
 
+// SHORTENING UNDERTALE: TOO MANY REPETITIONS
+NOTE song[] =
+	 {
+		  // Jingle Bells, Jingle Bells
+		  {e4, time_croma},
+		  {e4, time_croma},
+		  {e4, time_semicroma * 2},
+		  {e4, time_croma},
+		  {e4, time_croma},
+		  {e4, time_semicroma * 2},
+		  {e4, time_semicroma},
+		  {g4, time_croma},
+		  {c4, time_semicroma},
+		  {d4, time_semicroma},
+		  {e4, time_semicroma * 2},
 
-//SHORTENING UNDERTALE: TOO MANY REPETITIONS
-NOTE song[] = 
-{
-    // Jingle Bells, Jingle Bells
-    {e4, time_croma}, {e4, time_croma}, {e4, time_semicroma*2},
-    {e4, time_croma}, {e4, time_croma}, {e4, time_semicroma*2},
-    {e4, time_semicroma}, {g4, time_croma}, {c4, time_semicroma}, {d4, time_semicroma},
-    {e4, time_semicroma*2},
+		  // Oh, what fun it is to ride
+		  {f4, time_croma},
+		  {f4, time_croma},
+		  {f4, time_croma},
+		  {f4, time_croma},
+		  {f4, time_semicroma},
+		  {e4, time_semicroma},
+		  {e4, time_croma},
+		  {e4, time_croma},
+		  {e4, time_croma},
+		  {d4, time_croma},
+		  {d4, time_croma},
+		  {e4, time_croma},
+		  {d4, time_croma * 2},
+		  {g4, time_croma * 2},
 
-    // Oh, what fun it is to ride
-    {f4, time_croma}, {f4, time_croma}, {f4, time_croma}, {f4, time_croma},
-    {f4, time_semicroma}, {e4, time_semicroma}, {e4, time_croma}, {e4, time_croma},
-    {e4, time_croma}, {d4, time_croma}, {d4, time_croma}, {e4, time_croma},
-    {d4, time_croma*2}, {g4, time_croma*2},
+		  // In a one-horse open sleigh!
+		  {e4, time_croma},
+		  {e4, time_croma},
+		  {e4, time_semicroma * 2},
+		  {e4, time_croma},
+		  {e4, time_croma},
+		  {e4, time_semicroma * 2},
+		  {e4, time_semicroma},
+		  {g4, time_croma},
+		  {c4, time_semicroma},
+		  {d4, time_semicroma},
+		  {e4, time_semicroma * 2},
 
-    // In a one-horse open sleigh!
-    {e4, time_croma}, {e4, time_croma}, {e4, time_semicroma*2},
-    {e4, time_croma}, {e4, time_croma}, {e4, time_semicroma*2},
-    {e4, time_semicroma}, {g4, time_croma}, {c4, time_semicroma}, {d4, time_semicroma},
-    {e4, time_semicroma*2},
-
-    // Repeat the melody for other lines as necessary!
+		  // Repeat the melody for other lines as necessary!
 };
-/* NOTE song[] = 
+/* NOTE song[] =
 {
 	// 1
 	{d3, time_semicroma},
@@ -276,28 +336,28 @@ NOTE song[] =
 	{f3, time_semicroma},
 	{g3, time_semicroma},
 	// 5
-	
+
 }; */
 
-void TIMER3_IRQHandler (void)
+void TIMER3_IRQHandler(void)
 {
 	static int currentNote = 0;
 	static int ticks = 0;
-	if(!isNotePlaying())
+	if (!isNotePlaying())
 	{
 		++ticks;
-		if(ticks == UPTICKS)
+		if (ticks == UPTICKS)
 		{
 			ticks = 0;
 			playNote(song[currentNote++]);
 		}
 	}
-	
-	if(currentNote == (sizeof(song) / sizeof(song[0])))
+
+	if (currentNote == (sizeof(song) / sizeof(song[0])))
 	{
 		currentNote = 0;
 	}
-	
-  LPC_TIM3->IR = 1;			/* clear interrupt flag */
-  return;
+
+	LPC_TIM3->IR = 1; /* clear interrupt flag */
+	return;
 }

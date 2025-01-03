@@ -31,6 +31,14 @@ void enable_timer( uint8_t timer_num )
   return;
 }
 
+void disable_timers()
+{
+  LPC_TIM0->TCR = 0;
+  LPC_TIM1->TCR = 0;
+  LPC_TIM2->TCR = 0;
+  LPC_TIM3->TCR = 0;
+}
+
 void disable_timer( uint8_t timer_num )
 {
   if ( timer_num == 0 )

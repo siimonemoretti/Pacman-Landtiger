@@ -1,5 +1,6 @@
 #include "pacman.h"
 #include "LPC17xx.h"
+#include "../a_star/a_star.h"
 #include <stdlib.h>
 
 void init_random_pow_pills()
@@ -27,44 +28,26 @@ void move_ghost()
 {
 	if (game.ghost.mode == CHASE_MODE)
 	{
-		// Initialize the best distance to the current distance
-		int best_distance = 10000;
-		// Search for the best available move between: up, down, left, right
-		int i, k;
-		int16_t new_x = game.ghost.x;
-		int16_t new_y = game.ghost.y;
-		// Direction offsets for up, down, left, and right
-		int directions[4][2] = {
-				{0, -1}, // Up
-				{0, 1},	 // Down
-				{-1, 0}, // Left
-				{1, 0}	 // Right
-		};
-
-		// Iterate over each direction
-		for (i = 0; i < 4; i++)
+		// Move towards pacman
+		dir_t dir = a_star(game.map, game.ghost.x, game.ghost.y, game.pacman.x, game.pacman.y);
+		if (is_valid_move(game.ghost.x + dx[dir], game.ghost.y + dy[dir]))
 		{
-			int new_x_candidate = game.ghost.x + directions[i][0];
-			int new_y_candidate = game.ghost.y + directions[i][1];
-
-			if (is_valid_move(new_x_candidate, new_y_candidate))
-			{
-				int distance = manhattan_distance(new_x_candidate, new_y_candidate, game.pacman.x, game.pacman.y);
-				if (distance < best_distance)
-				{
-					best_distance = distance;
-					new_x = new_x_candidate;
-					new_y = new_y_candidate;
-				}
-			}
+			game.ghost.x += dx[dir];
+			game.ghost.y += dy[dir];
 		}
-		// Move the ghost's position
-		game.ghost.x = new_x;
-		game.ghost.y = new_y;
 		LCD_DrawGhost(game.ghost.x, game.ghost.y, Red);
 	}
 	else if (game.ghost.mode == FRIGHTENED_MODE)
 	{
+		// Move away from pacman
+		int opposite_x = MAP_X - game.pacman.x - 1;
+		int opposite_y = MAP_Y - game.pacman.y - 1;
+		dir_t dir = a_star(game.map, game.ghost.x, game.ghost.y, opposite_x, opposite_y);
+		if (is_valid_move(game.ghost.x + dx[dir], game.ghost.y + dy[dir]))
+		{
+			game.ghost.x += dx[dir];
+			game.ghost.y += dy[dir];
+		}
 		LCD_DrawGhost(game.ghost.x, game.ghost.y, Blue);
 	}
 }

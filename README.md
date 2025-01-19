@@ -3,6 +3,12 @@ Project for Computer Architecture course at Politecnico di Torino.
 
 Target board of this project is the Landtiger LPC1768, a development board based on NXP's ARM Cortex-M3 microcontroller LPC1768.
 
+## Game demo
+
+![Game demo](Images/video_demo.gif)
+
+*Game demonstration video, using PoliTo's Landtiger emulator software.*
+
 ## Part 1 Game specifications
 
 1. Fill labyrinth with 240 standard pills, which are worth 10 points each.

@@ -1,6 +1,7 @@
 # Pacman on ARM board
 Project for Computer Architecture course at Politecnico di Torino.
-Board target of this project is the Landtiger LPC1768.
+
+Target board of this project is the Landtiger LPC1768, a development board based on NXP's ARM Cortex-M3 microcontroller LPC1768.
 
 ## Part 1 Game specifications
 
@@ -14,8 +15,6 @@ Board target of this project is the Landtiger LPC1768.
 8. Game ends when:
     - Pacman eats all pills. "Victory" screen is displayed.
     - Timer reaches 0. "Game Over" message is displayed.
-
-## Part 2 Game demo
 
 ## Part 2 Game specifications
 

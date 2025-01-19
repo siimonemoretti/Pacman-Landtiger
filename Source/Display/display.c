@@ -20,7 +20,16 @@ void win_screen()
 void draw_lifes()
 {
    uint8_t i = 0;
-   for (; i < game.stats.lifes; i++)
+	 // Draw a black line to cancel out previous hearts
+	 LCD_DrawLine(8, 310, 40, 310, Black);
+	 LCD_DrawLine(8, 309, 40, 309, Black);
+	 LCD_DrawLine(8, 308, 40, 308, Black);
+	 LCD_DrawLine(8, 307, 40, 307, Black);
+	 LCD_DrawLine(8, 306, 40, 306, Black);
+	 LCD_DrawLine(8, 305, 40, 305, Black);
+	 LCD_DrawLine(8, 304, 40, 304, Black);
+	 LCD_DrawLine(8, 303, 40, 303, Black);
+	 for (; i < game.stats.lifes; i++)
    {
       LCD_DrawHeart(8 + i * 8, 310, Yellow);
    }
@@ -66,7 +75,7 @@ void draw_cell(uint8_t x, uint8_t y, cell_t type)
 void draw_map(game_t game)
 {
    LCD_Clear(BK_COLOR);
-   uint8_t x, y;
+	 uint8_t x, y;
    for (x = 0; x < MAP_X; x++)
       for (y = 0; y < MAP_Y; y++)
 				draw_cell(x,y,game.map[x][y]);

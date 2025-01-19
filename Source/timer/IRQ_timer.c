@@ -68,44 +68,52 @@ void TIMER0_IRQHandler(void)
 			disable_RIT();
 			win_screen();
 		}
-		// Draw back original cell's type, then move ghost
-		draw_cell(game.ghost.x, game.ghost.y, game.map[game.ghost.x][game.ghost.y]);
-		move_ghost();
-		// Check if ghost caught pacman
-		if (game.ghost.x == game.pacman.x && game.ghost.y == game.pacman.y)
+		if (game.ghost.respawn_time == 0)
 		{
-			// Check ghost's mode
-			if (game.ghost.mode == CHASE_MODE)
-			{
-				// Decrease remaining lifes
-				game.stats.lifes--;
-				if (game.stats.lifes <= 0)
-				{
-					disable_timer(0);
-					disable_timer(1);
-					disable_timer(2);
-					disable_timer(3);
-					disable_RIT();
-					lost_screen();
-				}
-				else
-				{
-					// Respawn pacman
-					game.pacman.x = 13;
-					game.pacman.y = 13;
-					game.pacman.dir = RIGHT;
-					LCD_DrawPacman(13, 13, RIGHT, Yellow);
-					draw_lifes();
-				}
-			}
-			else if (game.ghost.mode == FRIGHTENED_MODE)
-			{
-				// Increase score
-				game.stats.score += 100;
-				can_message.score += 100;
-				// TODO : Respawn ghost after 3 seconds
-			}
-		}
+			// Move ghost
+			move_ghost();
+		  // Check if ghost caught pacman
+		  if (game.ghost.x == game.pacman.x && game.ghost.y == game.pacman.y)
+		  {
+		  	// Check ghost's mode
+		  	if (game.ghost.mode == CHASE_MODE)
+		  	{
+		  		// Decrease remaining lifes
+		  		game.stats.lifes = game.stats.lifes - 1;
+					can_message.lifes = can_message.lifes - 1;
+		  		draw_lifes();
+		  		if (game.stats.lifes <= 0)
+		  		{
+		  			disable_timer(0);
+		  			disable_timer(1);
+		  			disable_timer(2);
+		  			disable_timer(3);
+		  			disable_RIT();
+		  			lost_screen();
+		  		}
+		  		else
+		  		{
+						// Delete pacman
+						draw_cell(game.pacman.x, game.pacman.y, game.map[game.pacman.x][game.pacman.y]);
+		  			// Respawn pacman
+		  			game.pacman.x = START_X;
+		  			game.pacman.y = START_Y;
+		  			game.pacman.dir = NUM_DIRS;
+		  			LCD_DrawPacman(game.pacman.x, game.pacman.y, game.pacman.dir, game.pacman.color);
+		  		}
+		  	}
+		  	else if (game.ghost.mode == FRIGHTENED_MODE)
+		  	{
+		  		// Increase score
+		  		game.stats.score += 100;
+		  		can_message.score += 100;
+		  		// Respawn after 3 seconds and delete ghost
+		  		game.ghost.frightened_cnt = 0;
+		  		game.ghost.respawn_time = 3;
+		  		draw_cell(game.ghost.x, game.ghost.y, game.map[game.ghost.x][game.ghost.y]); // Deletes ghost
+		  	}
+		  }
+	  }
 		// Print score
 		if (game.stats.score != prev_sc)
 		{
@@ -114,7 +122,8 @@ void TIMER0_IRQHandler(void)
 			{
 				game.stats.score -= 1000;
 				can_message.score -= 1000;
-				game.stats.lifes++;
+				game.stats.lifes += 1;
+				can_message.lifes += 1;
 				draw_lifes();
 			}
 			// Half is 120 pixels lons, score is 5*8 = 40 pixels, so write SCORE @ X = 80
@@ -161,17 +170,32 @@ void TIMER1_IRQHandler(void)
 		disable_timer(2);
 		disable_timer(3);
 	}
-
-	// Check Ghost's mode
-	if (game.ghost.frightened_cnt > 0)
+	
+	if (game.ghost.respawn_time > 0)
 	{
-		game.ghost.frightened_cnt--;
-		game.ghost.mode = FRIGHTENED_MODE;
+		LCD_DrawGhost(13,13,Red);
+		game.ghost.respawn_time -= 1;
+		if (game.ghost.respawn_time == 0)
+		{
+			LCD_DrawFloor(13,13);
+			game.ghost.x = 16;
+	    game.ghost.y = 13;
+	    game.ghost.mode = CHASE_MODE;
+		}
 	}
 	else
 	{
-		game.ghost.mode = CHASE_MODE;
-	}
+	  // Check Ghost's mode
+	  if (game.ghost.frightened_cnt > 0)
+	  {
+	  	game.ghost.frightened_cnt--;
+	  	game.ghost.mode = FRIGHTENED_MODE;
+	  }
+	  else
+	  {
+	  	game.ghost.mode = CHASE_MODE;
+	  }
+  }
 
 	// Check if we have to spawn a power pill
 	if (game.power_pills[index] == t)

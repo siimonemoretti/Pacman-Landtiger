@@ -1,23 +1,5 @@
 #include "a_star.h"
 
-typedef struct
-{
-   int x;
-   int y;
-   int g; // cost from start to this node
-   int f; // total cost of this node (= g + h)
-} node_t;
-
-typedef struct
-{
-   node_t *node;
-   int size;
-   int capacity;
-} priority_queue_t;
-
-const int dx[NUM_DIRS] = {0, 1, 0, -1};
-const int dy[NUM_DIRS] = {1, 0, -1, 0};
-
 void pq_init(priority_queue_t *pq, int capacity)
 {
    pq->node = (node_t *)malloc(capacity * sizeof(node_t));
@@ -87,11 +69,14 @@ int heuristic(int x1, int y1, int x2, int y2)
    return abs(x1 - x2) + abs(y1 - y2);
 }
 
+static int dy[4] = {0, 1, 0, -1};
+static int dx[4] = {1, 0, -1, 0};
+
 dir_t a_star(cell_t map[MAP_X][MAP_Y], int start_x, int start_y, int goal_x, int goal_y)
 {
    // Priority queue
-   priority_queue_t open;
-   pq_init(&open, MAP_X * MAP_Y);
+   priority_queue_t pq;
+   pq_init(&pq, MAP_X * MAP_Y);
 
    // Visited array
    int visited[MAP_X][MAP_Y] = {0};
@@ -99,8 +84,9 @@ dir_t a_star(cell_t map[MAP_X][MAP_Y], int start_x, int start_y, int goal_x, int
    int g_cost[MAP_X][MAP_Y] = {0};
 
    // Start node
-   pq_push(&pq, (node_t){startX, startY, 0, heuristic(startX, startY, goalX, goalY)});
-   visited[startX][startY] = 1;
+	 node_t n = {start_x, start_y, 0, heuristic(start_x, start_y, goal_x, goal_y)};
+   pq_push(&pq, &n);
+   visited[start_x][start_y] = 1;
 
    while (!pq_empty(&pq))
    {
@@ -109,22 +95,26 @@ dir_t a_star(cell_t map[MAP_X][MAP_Y], int start_x, int start_y, int goal_x, int
       int x = current.x, y = current.y;
 
       // If we reach the goal, backtrack to find the first move
-      if (x == goalX && y == goalY)
+      if (x == goal_x && y == goal_y)
       {
-         while (!(x == startX && y == startY))
+         while (!(x == start_x && y == start_y))
          {
             dir_t dir = directions[x][y];
             x -= dx[dir];
             y -= dy[dir];
 
             // If we're back at the starting point, return the first direction
-            if (x == startX && y == startY)
+            if (x == start_x && y == start_y)
+						{
+							 pq_free(&pq);
                return dir;
+						}
          }
       }
 
       // Explore neighbors
-      for (int i = 0; i < NUM_DIRS; i++)
+			int i;
+      for (i = 0; i < NUM_DIRS; i++)
       {
          int nx = x + dx[i];
          int ny = y + dy[i];
@@ -133,12 +123,13 @@ dir_t a_star(cell_t map[MAP_X][MAP_Y], int start_x, int start_y, int goal_x, int
          if (nx >= 0 && nx < MAP_X && ny >= 0 && ny < MAP_Y && map[nx][ny] != WALL && map[nx][ny] != TELEPORT)
          {
             int newG = current.g + 1; // Cost to reach this neighbor
-            int newF = newG + heuristic(nx, ny, goalX, goalY);
+            int newF = newG + heuristic(nx, ny, goal_x, goal_y);
 
             // If we find a better path to this cell, enqueue it
             if (!visited[nx][ny] || newG < g_cost[nx][ny])
             {
-               pq_push(&pq, (node_t){nx, ny, newG, newF});
+							 node_t n = {nx, ny, newG, newF};
+               pq_push(&pq, &n);
                visited[nx][ny] = 1;
                g_cost[nx][ny] = newG;
                directions[nx][ny] = (dir_t)i;
@@ -147,6 +138,6 @@ dir_t a_star(cell_t map[MAP_X][MAP_Y], int start_x, int start_y, int goal_x, int
       }
    }
    // If no path found
-   pq_free(&open);
+   pq_free(&pq);
    return NUM_DIRS; // Return an invalid direction
 }

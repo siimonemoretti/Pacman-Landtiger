@@ -19,10 +19,10 @@ game_t game  = {
 	 .pacman = {
 		  .x = START_X,
 		  .y = START_Y,
-		  .dir = UP,
+		  .dir = NUM_DIRS,
 		  .color = Yellow,
 	 },
-	 .gamestate = GAMESTATE_GAME,
+	 .gamestate = GAMESTATE_INTRO,
 	 .map = {
 		  ROW_0, ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8, ROW_9, ROW_10, ROW_11, ROW_12, ROW_13,
 		  ROW_13, ROW_12, ROW_11, ROW_10, ROW_9, ROW_8, ROW_7, ROW_6, ROW_5, ROW_4, ROW_3, ROW_2, ROW_1, ROW_0
@@ -33,7 +33,8 @@ game_t game  = {
 	 .pill_counter = 240,
 	 .ghost.x = 16,
 	 .ghost.y = 13,
-	 .ghost.mode = CHASE_MODE
+	 .ghost.mode = CHASE_MODE,
+	 .ghost.respawn_time = 0
 };
 
 uint8_t button_pressed;
@@ -49,7 +50,7 @@ int main(void)
 	LCD_Initialization();
 	BUTTON_init();
 	JOYSTICK_init();
-	#ifndef SIMULATOR
+	#ifndef SIMULATOR /* In simulation we don't use CAN peripheral to update game's statistics */
 	CAN_init();
 	#endif
 	LPC_SC->PCONP       |=  (1<<22);      /* Enable power to TIM2 block          */
@@ -71,7 +72,7 @@ int main(void)
 	init_RIT(0x007270E0);	
 	#else
 	init_timer(0,25000000/150);
-	init_timer(1,25000000/60);	/* In simulation we don't wait for an entire second */
+	init_timer(1,25000000/30);	/* In simulation we don't wait for an entire second */
 	init_RIT(0x000270E0);
 	#endif
 	enable_timer(0);

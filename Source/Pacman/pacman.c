@@ -24,22 +24,32 @@ static int8_t is_valid_move(int16_t x, int16_t y)
 	return (x >= 0 && x < MAP_X && y >= 0 && y < MAP_Y && game.map[x][y] != WALL);
 }
 
+static int dx[4] = {+1, 0, -1, 0};
+static int dy[4] = {0, +1, 0, -1};
+
 void move_ghost()
 {
 	if (game.ghost.mode == CHASE_MODE)
 	{
+		// Delete ghost
+		draw_cell(game.ghost.x, game.ghost.y, game.map[game.ghost.x][game.ghost.y]);
 		// Move towards pacman
 		dir_t dir = a_star(game.map, game.ghost.x, game.ghost.y, game.pacman.x, game.pacman.y);
-		if (is_valid_move(game.ghost.x + dx[dir], game.ghost.y + dy[dir]))
-		{
-			game.ghost.x += dx[dir];
-			game.ghost.y += dy[dir];
+		if(dir != NUM_DIRS){
+				game.ghost.x += dx[dir];
+				game.ghost.y += dy[dir];
 		}
 		LCD_DrawGhost(game.ghost.x, game.ghost.y, Red);
 	}
 	else if (game.ghost.mode == FRIGHTENED_MODE)
 	{
-		// Move away from pacman
+		// Move away from pacman, but slowed down
+		if (game.stats.time_left % 2 == 0) // Slowing down Ghost by 50 percent
+		{
+			return;
+		}
+		// Delete ghost
+		draw_cell(game.ghost.x, game.ghost.y, game.map[game.ghost.x][game.ghost.y]);
 		int opposite_x = MAP_X - game.pacman.x - 1;
 		int opposite_y = MAP_Y - game.pacman.y - 1;
 		dir_t dir = a_star(game.map, game.ghost.x, game.ghost.y, opposite_x, opposite_y);

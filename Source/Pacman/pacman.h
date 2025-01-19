@@ -1,7 +1,6 @@
 #ifndef _PACMAN_H_
 #define _PACMAN_H_
 #include <stdint.h>
-#include "../a_star/a_star.h"
 
 /* LCD Colors */
 #define White 0xFFFF
@@ -76,11 +75,12 @@ static const uint8_t ghost[6][6] = {
 
 typedef struct
 {
-	int16_t x;
-	int16_t y;
+	int x;
+	int y;
 	ghost_mode_t mode;
 	int8_t visible;
 	int8_t frightened_cnt;
+	int8_t respawn_time;
 } ghost_t;
 
 typedef struct
